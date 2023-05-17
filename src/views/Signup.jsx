@@ -17,7 +17,7 @@ export default function Signup() {
 	const [successMsg, setSuccessMsg] = useState('') //TODO delete success msg - debug only
 
 	function checkErrors() {
-		const { firstName, lastName, emailAddress, password, confirmPassword } = credentials
+		const { emailAddress, password, confirmPassword } = credentials
 		const areFieldsEmpty = Object.values(credentials).some((field) => field === '')
 		if (areFieldsEmpty) {
 			setError('Please fill out all fields.')
