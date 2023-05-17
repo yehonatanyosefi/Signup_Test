@@ -1,0 +1,48 @@
+body {
+     background-color: #fff;
+}
+@mixin wide-btn() {
+     width: rem(300px);
+     height: rem(40px);
+     border-radius: rem(6px);
+     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.signup {
+     // display: flex;
+     @include flex-center;     
+     flex-direction: column;
+     gap: 1.2em;
+     form {
+          color: #333333;
+          display: flex;
+          flex-direction: column;
+          gap: 1.2em;
+          .input-wrapper {
+               @include wide-btn;
+               display: flex;
+               align-items: center;
+               font-size: 10px;
+               position: relative;
+               input {
+                    padding: 0.5em 2em;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    outline: none;
+               }
+               .toggle-password {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    right: 10%;
+                    cursor: pointer;
+                    // color: lightgray;
+               }
+          }
+          button {
+               @include wide-btn;
+               background-color: orange;
+               color: #fff;
+          }
+     }
+}

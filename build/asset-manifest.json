@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/MrCrypto/static/css/main.10738613.css",
+    "main.js": "/MrCrypto/static/js/main.892a462f.js",
+    "static/js/787.3685212e.chunk.js": "/MrCrypto/static/js/787.3685212e.chunk.js",
+    "static/media/mr_crypto.png": "/MrCrypto/static/media/mr_crypto.a9aa9b0640a4e5347b69.png",
+    "index.html": "/MrCrypto/index.html",
+    "main.10738613.css.map": "/MrCrypto/static/css/main.10738613.css.map",
+    "main.892a462f.js.map": "/MrCrypto/static/js/main.892a462f.js.map",
+    "787.3685212e.chunk.js.map": "/MrCrypto/static/js/787.3685212e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.10738613.css",
+    "static/js/main.892a462f.js"
+  ]
+}
