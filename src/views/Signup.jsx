@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react'
-// import { doesUserNameExists, signUp } from '../services/user.service'
+import { useEffect, useState } from 'react'
+// import { doesEmailAddressExist, signup } from '../services/user.service'
 import { Link } from 'react-router-dom'
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 //TODO update react router version
@@ -54,6 +54,7 @@ export default function Signup() {
 
 	const handleSignup = async (ev) => {
 		ev.preventDefault()
+		setSuccessMsg('')
 		if (checkErrors()) return
 		try {
 			// signUp(credentials)
