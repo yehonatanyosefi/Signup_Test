@@ -3,6 +3,8 @@ export const utilService = {
     makeId,
     saveToStorage,
     loadFromStorage,
+    debounce,
+    getRandomIntInclusive,
 }
 
 export function makeId(length = 5) {
