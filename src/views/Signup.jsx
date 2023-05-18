@@ -84,7 +84,7 @@ export default function Signup() {
 				})
 			)
 		}
-		
+
 		if (field === '') {
 			setErrors((prevErrors) => ({ ...prevErrors, [field]: 'Please fill out all fields.' }))
 			return true
@@ -113,9 +113,12 @@ export default function Signup() {
 			setErrors((prevErrors) => ({ ...prevErrors, general: 'Please fill out all fields.' }))
 			return false
 		}
-		// if (credentialsArr.some(credential => checkError(credential, validation[credential]))) {
-		// 	return false
-		// }
+		const isAnyInputInvalid = credentialsArr.some((credential) =>
+			checkError(credential, validation[credential])
+		)
+		if (isAnyInputInvalid) {
+			return false
+		}
 		const hasSpaces = credentialsArr.find((field) => field.includes(' '))
 		if (hasSpaces) {
 			setErrors((prevErrors) => ({ ...prevErrors, general: 'Please remove spaces.' }))
@@ -178,9 +181,11 @@ export default function Signup() {
 	return (
 		<div className="signup">
 			{/* <Link to={'/'}> */}
-			<h1 className="signup-header">
-				<img src="../assets/imgs/logo.png" alt="Eramorph Logo" className="logo" />
-			</h1>
+			<div className="header">
+				<SvgIcon iconName="logo" title="Eramorph Logo" className="logo" />
+				<h1 className="signup-header">Eramorph</h1>
+				<h2>Evolve Constantly</h2>
+			</div>
 			{/* </Link> */}
 			<form onSubmit={handleSignup} method="POST">
 				{inputFields.map((inputField, idx) => {
@@ -203,6 +208,7 @@ export default function Signup() {
 								onChange={(ev) => handleChange(ev)}
 								onBlur={(ev) => handleBlur(ev)}
 							/>
+							{hasBeenChecked && <SvgIcon iconName={errorClass} />}
 							{errors[name] && <div className="error-msg">{errors[name]}</div>}
 							{(type === 'password' || inputField?.isVisible) && (
 								<SvgIcon

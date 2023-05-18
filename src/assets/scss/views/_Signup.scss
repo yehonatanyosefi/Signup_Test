@@ -8,10 +8,16 @@ body {
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 .signup {
-	// display: flex;
 	@include flex-center;
 	flex-direction: column;
 	gap: 1.2em;
+	.header {
+		@include flex-center;
+		flex-direction: column;
+		.logo {
+			width: 50px;
+		}
+	}
 	form {
 		color: #333333;
 		display: flex;
@@ -38,6 +44,21 @@ body {
                     &:focus {
                          border: 1px solid orange;
                     }
+			}
+			span {
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				right: 10%;
+				&.error svg path {
+					fill: red;
+				}
+				&.success svg path {
+					fill: green;
+				}
+				svg {
+					font-size: 16px;
+				}
 			}
 			.error-msg {
 				position: absolute;
