@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/eramorph/static/css/main.4c8ee5df.css",
-    "main.js": "/eramorph/static/js/main.b933eccc.js",
+    "main.css": "/eramorph/static/css/main.294f096c.css",
+    "main.js": "/eramorph/static/js/main.b0daf8fc.js",
     "static/js/787.789846cd.chunk.js": "/eramorph/static/js/787.789846cd.chunk.js",
     "index.html": "/eramorph/index.html",
-    "main.4c8ee5df.css.map": "/eramorph/static/css/main.4c8ee5df.css.map",
-    "main.b933eccc.js.map": "/eramorph/static/js/main.b933eccc.js.map",
+    "main.294f096c.css.map": "/eramorph/static/css/main.294f096c.css.map",
+    "main.b0daf8fc.js.map": "/eramorph/static/js/main.b0daf8fc.js.map",
     "787.789846cd.chunk.js.map": "/eramorph/static/js/787.789846cd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4c8ee5df.css",
-    "static/js/main.b933eccc.js"
+    "static/css/main.294f096c.css",
+    "static/js/main.b0daf8fc.js"
   ]
 }
