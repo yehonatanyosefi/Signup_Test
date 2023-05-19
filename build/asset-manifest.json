@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/eramorph/static/css/main.1e168978.css",
+    "main.css": "/eramorph/static/css/main.f013b6eb.css",
     "main.js": "/eramorph/static/js/main.8f867db4.js",
     "static/js/52.4814214e.chunk.js": "/eramorph/static/js/52.4814214e.chunk.js",
     "static/js/15.98b48468.chunk.js": "/eramorph/static/js/15.98b48468.chunk.js",
@@ -10,7 +10,7 @@
     "static/media/SourceSansPro-SemiBold.ttf": "/eramorph/static/media/SourceSansPro-SemiBold.a8dc1b60c9ad609f0b4a.ttf",
     "static/media/SourceSansPro-Bold.ttf": "/eramorph/static/media/SourceSansPro-Bold.4a6e47d1db848f5e8218.ttf",
     "index.html": "/eramorph/index.html",
-    "main.1e168978.css.map": "/eramorph/static/css/main.1e168978.css.map",
+    "main.f013b6eb.css.map": "/eramorph/static/css/main.f013b6eb.css.map",
     "main.8f867db4.js.map": "/eramorph/static/js/main.8f867db4.js.map",
     "52.4814214e.chunk.js.map": "/eramorph/static/js/52.4814214e.chunk.js.map",
     "15.98b48468.chunk.js.map": "/eramorph/static/js/15.98b48468.chunk.js.map",
@@ -18,7 +18,7 @@
     "787.789846cd.chunk.js.map": "/eramorph/static/js/787.789846cd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1e168978.css",
+    "static/css/main.f013b6eb.css",
     "static/js/main.8f867db4.js"
   ]
 }
