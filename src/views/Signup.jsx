@@ -260,7 +260,6 @@ export default function Signup() {
 		)
 	}
 
-	//TODO: add link to home if possible to use app without sign in
 	return (
 		<div className="signup">
 			<SvgIcon iconName={'bg-mobile-rounded-svg'} className="bg-mobile-rounded-svg" />

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import './assets/scss/main.scss'
 // import { LOGIN, NOT_FOUND, SIGN_UP, HOME, PROFILE, PIC_CLASH, CREATE } from './routes'
@@ -15,7 +15,7 @@ export default function App() {
 	// 	}, [])
 	return (
 		<Suspense fallback={<p>Loading...</p>}>
-			<BrowserRouter>
+			<Router>
 				<section className="main-app">
 					{/* <AppHeader /> */}
 					<main className="container">
@@ -30,7 +30,7 @@ export default function App() {
 						</Routes>
 					</main>
 				</section>
-			</BrowserRouter>
+			</Router>
 		</Suspense>
 	)
 }
