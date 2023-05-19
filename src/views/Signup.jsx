@@ -322,14 +322,14 @@ export default function Signup() {
 							{(type === 'password' || inputField?.isVisible) && (
 								<SvgIcon
 									iconName="eye"
-									className={`toggle-eye ${inputField.isVisible ? 'hide-icon' : ''}`}
+									className={`toggle-eye ${inputField.isVisible ? '' : 'hide-icon'}`}
 									onClick={() => togglePassVisibility(name)}
 								/>
 							)}
 							{(type === 'password' || inputField?.isVisible) && (
 								<SvgIcon
 									iconName="eye-off"
-									className={`eye-off toggle-eye ${inputField.isVisible ? '' : 'hide-icon'}`}
+									className={`eye-off toggle-eye ${inputField.isVisible ? 'hide-icon' : ''}`}
 									onClick={() => togglePassVisibility(name)}
 								/>
 							)}
