@@ -1,5 +1,6 @@
 // import { useDispatch, useSelector } from 'react-redux'
 import { useEffect} from 'react'
+import { Link } from 'react-router-dom'
 
 // import { AtomLoader } from '../cmps/util/AtomLoader'
 // import { SvgIcon } from '../cmps/util/SvgIcon'
@@ -20,7 +21,7 @@ import { useEffect} from 'react'
 //   return { loggedInUser }
 // }
 
-export function Home() {
+export default function Home() {
   // const { loggedInUser } = useHomeLogic()
 
   useEffect(() => {
@@ -30,10 +31,10 @@ export function Home() {
   // if (!loggedInUser) return <AtomLoader />
 
     return (
-      <>
         <div className="home">
-          
-          </div>
-        </>
+            <Link to="/signup">
+              Signup
+            </Link>
+        </div>
     )
 }

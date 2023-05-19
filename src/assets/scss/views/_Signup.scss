@@ -1,28 +1,127 @@
 body {
 	background-color: #fff;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+$line-clr: turquoise;
+$svg-size: 17px;
+$accent-clr: #F5891F;
+$placeholder-clr: #707070;
+//put color only in an input's placeholder
+::-webkit-input-placeholder {
+	color: $placeholder-clr;
 }
 @mixin wide-btn() {
 	width: rem(300px);
-	height: rem(40px);
+	height: rem(50px);
 	border-radius: rem(6px);
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 12px;
 }
+@keyframes slideInFromLeftWithOpacity {
+	0% {
+		opacity: 0;
+		transform: translateX(25%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes rotateInFromLeftWithOpacity {
+  0% {
+    opacity: 0;
+    transform: rotate(-35deg);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rotateOutToRightWithOpacity {
+  0% {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  100% {
+	  opacity: 0;
+	  scale: 1.05;
+	  transform: rotate(25deg);
+  }
+}
+@keyframes openEye {
+	50% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+}
+}
+@keyframes closeEye {
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
 .signup {
 	@include flex-center;
 	flex-direction: column;
 	gap: 1.2em;
+	position: relative;
+	width: fit-content;
+	height: 100%;
+	.bg-mobile-rounded-svg {
+		position: absolute;
+		top: -110px;
+		left: 50%;
+		translate: -50%;
+		height: 100%;
+		z-index: -1;
+	}
+	.lines {
+		&.first-line {
+			left: -35px;
+		}
+		&.second-line {
+			right: -50px;
+		}
+		width: 15px;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		translate: -50% 0;
+		border-left: 1px solid $line-clr;
+		border-right: 1px solid $line-clr;
+	}
 	.header {
 		@include flex-center;
 		flex-direction: column;
+		margin-block-end: rem(60px);
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 		.logo {
+			padding-block-start: 30px;
 			width: 50px;
+		}
+		h1 {
+			font-family: 'SourceSansPro-Regular', sans-serif;
+			color: black;
+		}
+		.sub-header {
+			font-family: 'SourceSansPro-Bold', sans-serif;
+			color: $accent-clr;
+			font-weight: bold;
+			font-size: 0.925rem;
 		}
 	}
 	form {
 		color: #333333;
 		display: flex;
 		flex-direction: column;
-		gap: 1.2em;
+		gap: rem(24px);
 		.input-wrapper {
 			@include wide-btn;
 			display: flex;
@@ -30,64 +129,97 @@ body {
 			font-size: 10px;
 			position: relative;
 			input {
-                    &.success {
-                         border: 1px solid green;
-                    }
-                    &.error {
-                         border: 1px solid red;
-                    }
+				&:focus {
+					border: 1px solid $accent-clr;
+				}
+				&.success {
+					border: 1px solid green;
+				}
+				&.error {
+					border: 1px solid red;
+				}
 				padding: 0.5em 2em;
 				width: 100%;
 				height: 100%;
 				border: none;
 				outline: none;
-                    &:focus {
-                         border: 1px solid orange;
-                    }
 			}
-			span {
+			.svg-icon {
 				position: absolute;
 				top: 50%;
-				transform: translateY(-50%);
-				right: 10%;
-				&.error svg path {
-					fill: red;
-				}
-				&.success svg path {
-					fill: green;
-				}
+				translate: 0 -50%;
+				right: 5%;
+				height: $svg-size;
+				width: $svg-size;
 				svg {
 					font-size: 16px;
+				}
+				&.error {
+					color: red;
+					animation: 0.3s ease-out 0s 1 rotateInFromLeftWithOpacity forwards;
+				}
+				&.success {
+					color: green;
+					animation: 0.3s ease-out 0s 1 rotateInFromLeftWithOpacity forwards;
+				}
+				&.error,
+				&.success {
+					pointer-events: none;
+					transition: opacity 0.3s ease-in-out transform 0.3s ease-in-out;
+					&.hide-icon {
+						opacity: 0;
+						animation: 0.05s ease-out 0s 1 rotateOutToRightWithOpacity forwards;
+					}
+					svg {
+						width: $svg-size;
+						height: $svg-size;
+					}
+				}
+			}
+			&:has(.toggle-eye) {
+				.svg-icon:not(.toggle-eye) {
+					right: 15%;
 				}
 			}
 			.error-msg {
 				position: absolute;
-				bottom: -50%;
+				bottom: -35%;
 				right: 0;
 				color: red;
-                    font-size: 10px;
+				font-size: 10px;
+				animation: 0.3s ease-out 0s 1 slideInFromLeftWithOpacity forwards;
+				transition: opacity 0.3s ease-in-out transform 0.3s ease-in-out;
 			}
-			.toggle-password {
+			.toggle-eye {
 				position: absolute;
 				top: 50%;
-				transform: translateY(-50%);
-				right: 10%;
+				right: 5%;
 				cursor: pointer;
-				// color: lightgray;
+				opacity: 1;
 				svg {
-					width: 16px;
+					animation: 0.3s ease-out 0s 1 openEye;
+					width: $svg-size;
+					height: $svg-size;
+				}
+				&.hide-icon {
+					svg {
+						animation: 0.3s ease-out 0s 1 closeEye;
+					}
+					opacity: 0;
+				}
+				&.eye-off {
+					top: calc(50% + 0.7px);
 				}
 			}
 		}
 		.submit-btn {
 			@include wide-btn;
-			background-color: orange;
+			background-color: $accent-clr;
 			color: #fff;
-               &.disabled {
-                    // background-color: lightgray;
-                    opacity: 50%;
-                    cursor: not-allowed;
-               }
+			&.disabled {
+				opacity: 50%;
+				cursor: not-allowed;
+			}
 		}
 	}
 }

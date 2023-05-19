@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react'
 // import { doesEmailAddressExist, signup } from '../services/user.service'
-// import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { SvgIcon } from '../cmps/util/SvgIcon'
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-//TODO update react router version
+import { useCallbackState } from '../customHooks/useCallbackState'
+import { useGoogleLogin } from '@react-oauth/google'
+import axios from 'axios'
 export default function Signup() {
-	// const navigate = useNavigate()
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		document.title = 'Eramorph - Signup'
 	}, [])
 
+	// Regular expression to validate email addresses
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+	// Initial values for the user's registration information
 	const blankFields = {
 		firstName: '',
 		lastName: '',
@@ -18,32 +22,11 @@ export default function Signup() {
 		password: '',
 		confirmPassword: '',
 	}
-	const [credentials, setCredentials] = useState(JSON.parse(JSON.stringify(blankFields)))
+	// State for user's registration information
+	const [credentials, setCredentials] = useCallbackState(JSON.parse(JSON.stringify(blankFields)))
+	// State for errors in the registration form
 	const [errors, setErrors] = useState(JSON.parse(JSON.stringify(blankFields)))
-	const [successMsg, setSuccessMsg] = useState('') //TODO delete success msg - debug only
-	//TODO add more password requirements
-	const validation = {
-		firstName: {
-			qualifier: credentials.firstName.length < 2,
-			errorMsg: 'First name must be at least 2 characters.',
-		},
-		lastName: {
-			qualifier: credentials.lastName.length < 2,
-			errorMsg: 'Last name must be at least 2 characters.',
-		},
-		emailAddress: {
-			qualifier: !emailRegex.test(credentials.emailAddress),
-			errorMsg: 'Please enter a valid email address.',
-		},
-		password: {
-			qualifier: credentials.password.length < 6,
-			errorMsg: 'Password needs to be 6 letters or longer.',
-		},
-		confirmPassword: {
-			qualifier: credentials.password !== credentials.confirmPassword,
-			errorMsg: 'Passwords do not match.',
-		},
-	}
+	// State for input fields and their meta information
 	const [inputFields, setInputFields] = useState([
 		{ type: 'text', placeholder: 'First Name', name: 'firstName', hasBeenChecked: false },
 		{ type: 'text', placeholder: 'Last Name', name: 'lastName', hasBeenChecked: false },
@@ -63,37 +46,130 @@ export default function Signup() {
 			hasBeenChecked: false,
 		},
 	])
+	// Helper variables to determine state of form
+	const credentialsValues = Object.values(credentials)
+	const areSomeFieldsEmpty = credentialsValues.some((field) => field === '')
+	const errorsArr = Object.values(errors)
+	const areThereErrors = errorsArr.some((field) => field !== '')
 
-	function areAllValuesBlank(obj) {
-		for (let value of Object.values(obj)) {
-			if (value !== null && value !== '') {
-				return false
-			}
-		}
-		return true
-	}
+	// TODO: ... Google login code here: 
+	// const [profile, setProfile] = useState([])
+	// const login = useGoogleLogin({
+	// 	onSuccess: (codeResponse) => setUser(codeResponse),
+	// 	onError: (error) => console.log('Login Failed:', error),
+	// })
 
-	function checkError(field, validation) {
-		if (!inputFields.find((inputField) => inputField.name === field).hasBeenChecked) {
-			setInputFields((prevInputFields) =>
-				prevInputFields.map((inputField) => {
-					if (inputField.name === field) {
-						return { ...inputField, hasBeenChecked: true }
-					}
-					return inputField
-				})
-			)
+	// useEffect(() => {
+	// 	if (user) {
+	// 		axios
+	// 			.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+	// 				headers: {
+	// 					Authorization: `Bearer ${user.access_token}`,
+	// 					Accept: 'application/json',
+	// 				},
+	// 			})
+	// 			.then((res) => {
+	// 				setProfile(res.data)
+	// 			})
+	// 			.catch((err) => console.log(err))
+	// 	}
+	// }, [user])
+
+	// const logOut = () => {
+	// 	googleLogout()
+	// 	setProfile(null)
+	// }
+	// const login = useGoogleLogin({
+	// 	onSuccess: async (codeResponse) => {
+	// 		if (codeResponse && codeResponse.access_token) {
+	// 			// setUser({ ...codeResponse, access_token: codeResponse.access_token })
+	// 			// Fetch user profile data
+	// 			axios
+	// 				.get(
+	// 					`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`,
+	// 					{
+	// 						headers: {
+	// 							Authorization: `Bearer ${codeResponse.access_token}`,
+	// 							Accept: 'application/json',
+	// 						},
+	// 					}
+	// 				)
+	// 				.then(async (res) => {
+	// 					if (res.data) {
+	// 						// setProfile(res.data)
+	// 						// setFullname(res.data.name)
+	// 						// await signupUser(res.data.name)
+	// 					}
+	// 					console.log('Profile data:', res.data)
+	// 				})
+	// 				.catch((err) => console.log(err))
+	// 		} else {
+	// 			console.error('Login Failed: codeResponse or accessToken is undefined')
+	// 		}
+	// 	},
+	// 	onError: (error) => console.error('Login Failed:', error),
+	// })
+
+	// Function to check if a specific field in the form has an error
+	function checkError(field, credentials) {
+		const passwordQualifier =
+			credentials.password.length < 6 ||
+			!/[a-z]/.test(credentials.password) ||
+			!/[A-Z]/.test(credentials.password) ||
+			!/[!@#$%^&*]/.test(credentials.password)
+		const passwordErrorMsg =
+			credentials.password.length < 6
+				? 'Password needs to be 6 letters or longer.'
+				: !/[a-z]/.test(credentials.password)
+				? 'Password needs to contain at least one lowercase letter.'
+				: !/[A-Z]/.test(credentials.password)
+				? 'Password needs to contain at least one uppercase letter.'
+				: !/[!@#$%^&*]/.test(credentials.password)
+				? 'Password needs to contain at least one special character.'
+				: ''
+		const validation = {
+			firstName: {
+				qualifier: credentials.firstName.length < 2,
+				errorMsg: 'First name must be at least 2 characters.',
+			},
+			lastName: {
+				qualifier: credentials.lastName.length < 2,
+				errorMsg: 'Last name must be at least 2 characters.',
+			},
+			emailAddress: {
+				qualifier: !emailRegex.test(credentials.emailAddress),
+				errorMsg: 'Please enter a valid email address.',
+			},
+			password: {
+				qualifier: passwordQualifier,
+				errorMsg: passwordErrorMsg,
+			},
+			confirmPassword: {
+				qualifier: passwordQualifier || credentials.password !== credentials.confirmPassword,
+				errorMsg: passwordErrorMsg || 'Passwords do not match.',
+			},
 		}
+
+		// If there is a validation error, set the corresponding field in the errors state
+		// Else, clear the corresponding field in the errors state
+		setInputFields((prevInputFields) =>
+			prevInputFields.map((inputField) => {
+				if (inputField.name === field) {
+					return { ...inputField, hasBeenChecked: true }
+				}
+				return inputField
+			})
+		)
 
 		if (field === '') {
-			setErrors((prevErrors) => ({ ...prevErrors, [field]: 'Please fill out all fields.' }))
+			setErrors((prevErrors) => ({ ...prevErrors, [field]: 'Please fill out this fields.' }))
 			return true
 		}
 
-		if (validation.qualifier) {
+		if (validation[field].qualifier) {
 			setErrors((prevErrors) => ({
 				...prevErrors,
-				[field]: validation.errorMsg,
+				[field]: validation[field].errorMsg,
 			}))
 			return true
 		}
@@ -105,21 +181,20 @@ export default function Signup() {
 		return false
 	}
 
+	// Function to determine if the form is valid
 	function isValid() {
 		setErrors(JSON.parse(JSON.stringify(blankFields)))
-		const credentialsArr = Object.values(credentials)
-		const areFieldsEmpty = credentialsArr.some((field) => field === '')
-		if (areFieldsEmpty) {
+		if (areSomeFieldsEmpty) {
 			setErrors((prevErrors) => ({ ...prevErrors, general: 'Please fill out all fields.' }))
 			return false
 		}
-		const isAnyInputInvalid = credentialsArr.some((credential) =>
-			checkError(credential, validation[credential])
-		)
+
+		const credentialsKeys = Object.keys(credentials)
+		const isAnyInputInvalid = credentialsKeys.some((credential) => checkError(credential, credentials))
 		if (isAnyInputInvalid) {
 			return false
 		}
-		const hasSpaces = credentialsArr.find((field) => field.includes(' '))
+		const hasSpaces = credentialsValues.find((field) => field.includes(' '))
 		if (hasSpaces) {
 			setErrors((prevErrors) => ({ ...prevErrors, general: 'Please remove spaces.' }))
 			return false
@@ -140,24 +215,32 @@ export default function Signup() {
 		return true
 	}
 
+	// Event handlers for input fields
 	const handleChange = (ev) => {
 		const { name, value } = ev.target
-		setCredentials((prevCredentials) => ({ ...prevCredentials, [name]: value }))
+		setCredentials(
+			(prevCredentials) => ({ ...prevCredentials, [name]: value }),
+			(newCredentials) => checkError(name, newCredentials)
+		)
+	}
+
+	const handleFocus = (ev) => {
+		const { name } = ev.target
+		checkError(name, credentials)
 	}
 
 	const handleBlur = (ev) => {
 		const { name } = ev.target
-		checkError(name, validation[name])
+		checkError(name, credentials)
 	}
 
+	// Event handler for the signup form
 	const handleSignup = async (ev) => {
 		ev.preventDefault()
-		setSuccessMsg('')
 		if (!isValid()) return
 		try {
-			// signUp(credentials)
-			// navigate('/')
-			setSuccessMsg('Account created successfully.')
+			// await signUp(credentials)
+			navigate('/')
 			setErrors('')
 		} catch (err) {
 			console.error('Error in signup: ', err)
@@ -180,25 +263,34 @@ export default function Signup() {
 	//TODO: add link to home if possible to use app without sign in
 	return (
 		<div className="signup">
-			{/* <Link to={'/'}> */}
+			<SvgIcon iconName={'bg-mobile-rounded-svg'} className="bg-mobile-rounded-svg" />
+			<div className="lines first-line"></div>
+			<div className="lines second-line"></div>
 			<div className="header">
-				<SvgIcon iconName="logo" title="Eramorph Logo" className="logo" />
+				<Link to={'/'}>
+					<SvgIcon iconName="logo" className="logo" alt="Eramorph logo" />
+				</Link>
 				<h1 className="signup-header">Eramorph</h1>
-				<h2>Evolve Constantly</h2>
+				<h5 className="sub-header">Evolve. Constantly.</h5>
 			</div>
-			{/* </Link> */}
 			<form onSubmit={handleSignup} method="POST">
 				{inputFields.map((inputField, idx) => {
 					let { type, placeholder, name, hasBeenChecked } = inputField
 					let errorClass = ''
-					if (hasBeenChecked && errors[name]) errorClass = 'error'
-					else if (hasBeenChecked && !errors[name]) errorClass = 'success'
+					if (hasBeenChecked) {
+						if (errors[name]) errorClass = 'error'
+						else if (!errors[name]) errorClass = 'success'
+					}
 					if (type === 'password' && inputField.isVisible) {
 						type = 'text'
 					}
 					return (
 						<div key={idx} className={`input-wrapper`}>
+							<label htmlFor={name} hidden>
+								{placeholder}
+							</label>
 							<input
+								id={name}
 								className={errorClass}
 								type={type}
 								placeholder={placeholder}
@@ -206,14 +298,39 @@ export default function Signup() {
 								name={name}
 								value={credentials[name]}
 								onChange={(ev) => handleChange(ev)}
+								onFocus={(ev) => handleFocus(ev)}
 								onBlur={(ev) => handleBlur(ev)}
+								aria-required="true"
+								aria-invalid={!!errors[name]}
 							/>
-							{hasBeenChecked && <SvgIcon iconName={errorClass} />}
-							{errors[name] && <div className="error-msg">{errors[name]}</div>}
+							{hasBeenChecked && (
+								<SvgIcon
+									iconName={errorClass}
+									className={`error ${errorClass === 'error' ? '' : 'hide-icon'}`}
+								/>
+							)}
+							{hasBeenChecked && (
+								<SvgIcon
+									iconName={errorClass}
+									className={`success ${errorClass === 'success' ? '' : 'hide-icon'}`}
+								/>
+							)}
+							{errors[name] && (
+								<div className="error-msg" role="alert">
+									{errors[name]}
+								</div>
+							)}
 							{(type === 'password' || inputField?.isVisible) && (
 								<SvgIcon
-									iconName={!inputField.isVisible ? 'eye' : 'eye-off'}
-									className="toggle-password"
+									iconName="eye"
+									className={`toggle-eye ${inputField.isVisible ? 'hide-icon' : ''}`}
+									onClick={() => togglePassVisibility(name)}
+								/>
+							)}
+							{(type === 'password' || inputField?.isVisible) && (
+								<SvgIcon
+									iconName="eye-off"
+									className={`eye-off toggle-eye ${inputField.isVisible ? '' : 'hide-icon'}`}
 									onClick={() => togglePassVisibility(name)}
 								/>
 							)}
@@ -222,14 +339,11 @@ export default function Signup() {
 				})}
 				<button
 					type="submit"
-					disabled={!areAllValuesBlank(errors) || areAllValuesBlank(credentials)}
-					className={`submit-btn ${
-						!areAllValuesBlank(errors) || areAllValuesBlank(credentials) ? 'disabled' : ''
-					}`}>
+					disabled={areThereErrors || areSomeFieldsEmpty}
+					className={`submit-btn ${areThereErrors || areSomeFieldsEmpty ? 'disabled' : ''}`}>
 					Sign up and start evolving
 				</button>
 				{errors.general && <p className="error-msg">{errors.general}</p>}
-				{successMsg && <p className="success-msg">{successMsg}</p>}
 			</form>
 		</div>
 	)
