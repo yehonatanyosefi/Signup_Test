@@ -14,6 +14,12 @@
   url("../../fonts/SourceSansPro-Bold.ttf") format("truetype");
  font-weight: bold;
 }
+@font-face {
+ font-family: "SourceSansPro-SemiBold";
+ src: local("SourceSansPro-SemiBold"),
+  url("../../fonts/SourceSansPro-SemiBold.ttf") format("truetype");
+ font-weight: bold;
+}
 // @font-face {
 //     src: url(../../fonts/OpenSans-Light.ttf);
 //     font-family: OpenSans-Light;

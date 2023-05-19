@@ -1,14 +1,19 @@
-body {
-	background-color: #fff;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
 $line-clr: turquoise;
-$svg-size: 17px;
+$svg-size: 16px;
 $accent-clr: #F5891F;
 $placeholder-clr: #707070;
+$error-clr: #e71818;
+$success-clr: #38b76a;
+$white-font-clr: #fcfcfe;
+body {
+	background-color: $white-font-clr;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: #080011;
+}
 //put color only in an input's placeholder
 ::-webkit-input-placeholder {
-	color: $placeholder-clr;
+	// color: $placeholder-clr;
+	opacity: 50%;
 }
 @mixin wide-btn() {
 	width: rem(300px);
@@ -70,7 +75,6 @@ $placeholder-clr: #707070;
 .signup {
 	@include flex-center;
 	flex-direction: column;
-	gap: 1.2em;
 	position: relative;
 	width: fit-content;
 	height: 100%;
@@ -100,21 +104,22 @@ $placeholder-clr: #707070;
 	.header {
 		@include flex-center;
 		flex-direction: column;
-		margin-block-end: rem(60px);
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		margin-block-end: rem(90px);
 		.logo {
-			padding-block-start: 30px;
+			margin-block-start: rem(32px);
+			margin-block-end: rem(7px);
 			width: 50px;
 		}
 		h1 {
 			font-family: 'SourceSansPro-Regular', sans-serif;
 			color: black;
+			font-size: rem(34px);
 		}
 		.sub-header {
 			font-family: 'SourceSansPro-Bold', sans-serif;
 			color: $accent-clr;
 			font-weight: bold;
-			font-size: 0.925rem;
+			font-size: rem(16px);
 		}
 	}
 	form {
@@ -126,17 +131,18 @@ $placeholder-clr: #707070;
 			@include wide-btn;
 			display: flex;
 			align-items: center;
-			font-size: 10px;
+			font-size: 16px;
 			position: relative;
+			font-family: 'SourceSansPro-SemiBold', sans-serif;
 			input {
-				&:focus {
-					border: 1px solid $accent-clr;
-				}
+				// &:focus {
+				// 	border: 1px solid $accent-clr;
+				// }
 				&.success {
-					border: 1px solid green;
+					border: 1px solid $success-clr;
 				}
 				&.error {
-					border: 1px solid red;
+					border: 1px solid $error-clr;
 				}
 				padding: 0.5em 2em;
 				width: 100%;
@@ -148,19 +154,28 @@ $placeholder-clr: #707070;
 				position: absolute;
 				top: 50%;
 				translate: 0 -50%;
-				right: 5%;
+				right: rem(15px);
 				height: $svg-size;
 				width: $svg-size;
+				@include flex-center;
 				svg {
-					font-size: 16px;
+					font-size: 15px;
 				}
 				&.error {
-					color: red;
+					color: $error-clr;
 					animation: 0.3s ease-out 0s 1 rotateInFromLeftWithOpacity forwards;
+					svg {
+						width: 14px;
+						height: 13px;
+					}
 				}
 				&.success {
-					color: green;
+					color: $success-clr;
 					animation: 0.3s ease-out 0s 1 rotateInFromLeftWithOpacity forwards;
+					svg {
+						width: 17px;
+						height: 12px;
+					}
 				}
 				&.error,
 				&.success {
@@ -169,10 +184,6 @@ $placeholder-clr: #707070;
 					&.hide-icon {
 						opacity: 0;
 						animation: 0.05s ease-out 0s 1 rotateOutToRightWithOpacity forwards;
-					}
-					svg {
-						width: $svg-size;
-						height: $svg-size;
 					}
 				}
 			}
@@ -185,7 +196,7 @@ $placeholder-clr: #707070;
 				position: absolute;
 				bottom: -35%;
 				right: 0;
-				color: red;
+				color: $error-clr;
 				font-size: 10px;
 				animation: 0.3s ease-out 0s 1 slideInFromLeftWithOpacity forwards;
 				transition: opacity 0.3s ease-in-out transform 0.3s ease-in-out;
@@ -213,11 +224,13 @@ $placeholder-clr: #707070;
 			}
 		}
 		.submit-btn {
+			font-family: 'SourceSansPro-Regular', sans-serif;
 			@include wide-btn;
 			background-color: $accent-clr;
-			color: #fff;
+			color: $white-font-clr;
+			transition: opacity 0.3s ease-in-out;
 			&.disabled {
-				opacity: 50%;
+				opacity: 40%;
 				cursor: not-allowed;
 			}
 		}

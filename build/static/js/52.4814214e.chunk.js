@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkeramorph=self.webpackChunkeramorph||[]).push([[52],{52:function(e,n,r){r.r(n),r.d(n,{default:function(){return i}});var u=r(791),t=r(87),c=r(184);function i(){return(0,u.useEffect)((function(){document.title="Eramorph - Home"}),[]),(0,c.jsx)("div",{className:"home",children:(0,c.jsx)(t.rU,{to:"/signup",children:"Signup"})})}}}]);
+//# sourceMappingURL=52.4814214e.chunk.js.map
