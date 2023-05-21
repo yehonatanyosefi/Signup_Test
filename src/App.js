@@ -18,7 +18,7 @@ export default function App() {
 			<Router>
 				<section className="main-app">
 					{/* <AppHeader /> */}
-					<main className="container">
+					{/* <main className="container"> */}
 						<Routes>
 							<Route path="/signup" element={<Signup />} />
                             {/* <Route path={LOGIN} element={<Login />} />
@@ -28,7 +28,7 @@ export default function App() {
                             <Route path={'/404'} element={<NotFound />} />
                             <Route path="*" element={<Navigate to="/404" replace />} />
 						</Routes>
-					</main>
+					{/* </main> */}
 				</section>
 			</Router>
 		</Suspense>

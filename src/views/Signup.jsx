@@ -259,6 +259,10 @@ export default function Signup() {
 			})
 		)
 	}
+	const [isFloating, setIsFloating] = useState(true)
+	const handleFloatToggle = (ev) => {
+		setIsFloating(!isFloating)
+	}
 
 	return (
 		<div className="signup">
@@ -272,6 +276,10 @@ export default function Signup() {
 				<h1 className="signup-header">Eramorph</h1>
 				<h5 className="sub-header">Evolve. Constantly.</h5>
 			</div>
+			<label htmlFor="float">
+				Toggle Float
+				<input name="float" id="float" type="checkbox" checked={isFloating} onChange={(ev)=>handleFloatToggle(ev)} />
+			</label>
 			<form onSubmit={handleSignup} method="POST">
 				{inputFields.map((inputField, idx) => {
 					let { type, placeholder, name, hasBeenChecked } = inputField
@@ -285,14 +293,11 @@ export default function Signup() {
 					}
 					return (
 						<div key={idx} className={`input-wrapper`}>
-							<label htmlFor={name} hidden>
-								{placeholder}
-							</label>
 							<input
 								id={name}
 								className={errorClass}
 								type={type}
-								placeholder={placeholder}
+								placeholder={isFloating ? '' : placeholder}
 								aria-label={`Enter your ${placeholder}`}
 								name={name}
 								value={credentials[name]}
@@ -301,7 +306,10 @@ export default function Signup() {
 								onBlur={(ev) => handleBlur(ev)}
 								aria-required="true"
 								aria-invalid={!!errors[name]}
+								required
+								pattern=".*"
 							/>
+							<label htmlFor={name} className={isFloating ? '' : 'hidden'}>{placeholder}</label>
 							{hasBeenChecked && (
 								<SvgIcon
 									iconName={errorClass}
