@@ -5,6 +5,15 @@ import { SvgIcon } from '../cmps/util/SvgIcon'
 import { useCallbackState } from '../customHooks/useCallbackState'
 import { useGoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
+import { userPoolService } from '../services/user-pools.service'
+import { SUCCESS } from '../services/routes.service'
+
+// Regular expression to validate email addresses
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const LOWERCASE_REGEX = /[a-z]/
+const UPPERCASE_REGEX = /[A-Z]/
+const SPECIAL_CHARACTER_REGEX = /[!@#$%^&*]/
+
 export default function Signup() {
 	const navigate = useNavigate()
 
@@ -12,8 +21,6 @@ export default function Signup() {
 		document.title = 'Eramorph - Signup'
 	}, [])
 
-	// Regular expression to validate email addresses
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 	// Initial values for the user's registration information
 	const blankFields = {
 		firstName: '',
@@ -52,7 +59,7 @@ export default function Signup() {
 	const errorsArr = Object.values(errors)
 	const areThereErrors = errorsArr.some((field) => field !== '')
 
-	// TODO: ... Google login code here: 
+	// TODO: ... Google login code here:
 	// const [profile, setProfile] = useState([])
 	// const login = useGoogleLogin({
 	// 	onSuccess: (codeResponse) => setUser(codeResponse),
@@ -114,17 +121,17 @@ export default function Signup() {
 	function checkError(field, credentials) {
 		const passwordQualifier =
 			credentials.password.length < 6 ||
-			!/[a-z]/.test(credentials.password) ||
-			!/[A-Z]/.test(credentials.password) ||
-			!/[!@#$%^&*]/.test(credentials.password)
+			!LOWERCASE_REGEX.test(credentials.password) ||
+			!UPPERCASE_REGEX.test(credentials.password) ||
+			!SPECIAL_CHARACTER_REGEX.test(credentials.password)
 		const passwordErrorMsg =
 			credentials.password.length < 6
 				? 'Password needs to be 6 letters or longer.'
-				: !/[a-z]/.test(credentials.password)
+				: !LOWERCASE_REGEX.test(credentials.password)
 				? 'Password needs to contain at least one lowercase letter.'
-				: !/[A-Z]/.test(credentials.password)
+				: !UPPERCASE_REGEX.test(credentials.password)
 				? 'Password needs to contain at least one uppercase letter.'
-				: !/[!@#$%^&*]/.test(credentials.password)
+				: !SPECIAL_CHARACTER_REGEX.test(credentials.password)
 				? 'Password needs to contain at least one special character.'
 				: ''
 		const validation = {
@@ -137,7 +144,7 @@ export default function Signup() {
 				errorMsg: 'Last name must be at least 2 characters.',
 			},
 			emailAddress: {
-				qualifier: !emailRegex.test(credentials.emailAddress),
+				qualifier: !EMAIL_REGEX.test(credentials.emailAddress),
 				errorMsg: 'Please enter a valid email address.',
 			},
 			password: {
@@ -234,13 +241,47 @@ export default function Signup() {
 		checkError(name, credentials)
 	}
 
+	async function signUp() {
+		try {
+			const { username, password, firstName, lastName, emailAddress } = credentials
+			const attributes = [
+				{
+					Name: 'email',
+					Value: emailAddress,
+				},
+				{
+					Name: 'given_name',
+					Value: firstName,
+				},
+				{
+					Name: 'family_name',
+					Value: lastName,
+				},
+			]
+			let success = false
+			await userPoolService.signUp(username, password, attributes, null, (err, result) => {
+				if (err) {
+					console.log(err) //TODO handle errors separately
+					setErrors((prevErrors) => ({ ...prevErrors, general: err.message }))
+					return
+				}
+				success = true
+				console.log('user name is ' + result.user.getUsername())
+			})
+			return success
+		} catch (err) {
+			console.log(err)
+			throw err
+		}
+	}
+
 	// Event handler for the signup form
 	const handleSignup = async (ev) => {
 		ev.preventDefault()
 		if (!isValid()) return
 		try {
-			// await signUp(credentials)
-			navigate('/')
+			await signUp()
+			navigate(SUCCESS)
 			setErrors('')
 		} catch (err) {
 			console.error('Error in signup: ', err)
@@ -278,7 +319,13 @@ export default function Signup() {
 			</div>
 			<label htmlFor="float">
 				Toggle Float
-				<input name="float" id="float" type="checkbox" checked={isFloating} onChange={(ev)=>handleFloatToggle(ev)} />
+				<input
+					name="float"
+					id="float"
+					type="checkbox"
+					checked={isFloating}
+					onChange={(ev) => handleFloatToggle(ev)}
+				/>
 			</label>
 			<form onSubmit={handleSignup} method="POST">
 				{inputFields.map((inputField, idx) => {
@@ -309,7 +356,9 @@ export default function Signup() {
 								required
 								pattern=".*"
 							/>
-							<label htmlFor={name} className={isFloating ? '' : 'hidden'}>{placeholder}</label>
+							<label htmlFor={name} className={isFloating ? '' : 'hidden'}>
+								{placeholder}
+							</label>
 							{hasBeenChecked && (
 								<SvgIcon
 									iconName={errorClass}

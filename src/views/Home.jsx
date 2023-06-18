@@ -31,10 +31,8 @@ export default function Home() {
   // if (!loggedInUser) return <AtomLoader />
 
     return (
-        <div className="home">
-            <Link to="/signup">
-              Signup
-            </Link>
-        </div>
-    )
+			<div className="home">
+				Home
+			</div>
+		)
 }

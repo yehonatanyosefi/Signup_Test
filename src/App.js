@@ -1,10 +1,12 @@
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import './assets/scss/main.scss'
-// import { LOGIN, NOT_FOUND, SIGN_UP, HOME, PROFILE, PIC_CLASH, CREATE } from './routes'
+import { YOGA, SIGN_UP, SUCCESS, HOME } from './services/routes.service'
 // import { useDispatch } from 'react-redux'
 const Home = lazy(() => import('./views/Home'))
 const Signup = lazy(() => import('./views/Signup'))
+const Yoga = lazy(() => import('./views/Yoga'))
+const Success = lazy(() => import('./views/Success'))
 const NotFound = lazy(() => import('./views/NotFound'))
 
 export default function App() {
@@ -19,15 +21,17 @@ export default function App() {
 				<section className="main-app">
 					{/* <AppHeader /> */}
 					{/* <main className="container"> */}
-						<Routes>
-							<Route path="/signup" element={<Signup />} />
-                            {/* <Route path={LOGIN} element={<Login />} />
+					<Routes>
+						{/* <Route path={LOGIN} element={<Login />} />
                             <Route path={SIGN_UP} element={<Signup />} />
                             <Route path={PROFILE} element={<Profile />} /> */}
-                            <Route path="/" element={<Home />} />
-                            <Route path={'/404'} element={<NotFound />} />
-                            <Route path="*" element={<Navigate to="/404" replace />} />
-						</Routes>
+						<Route path={SUCCESS} element={<Success />} />
+						<Route path={YOGA} element={<Yoga />} />
+						<Route path={HOME} element={<Home />} />
+						<Route path={SIGN_UP} element={<Signup />} />
+						<Route path={'/404'} element={<NotFound />} />
+						<Route path="*" element={<Navigate to="/404" replace />} />
+					</Routes>
 					{/* </main> */}
 				</section>
 			</Router>
