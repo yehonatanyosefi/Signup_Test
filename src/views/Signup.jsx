@@ -5,7 +5,7 @@ import { SvgIcon } from '../cmps/util/SvgIcon'
 import { useCallbackState } from '../customHooks/useCallbackState'
 import { useGoogleLogin } from '@react-oauth/google'
 import axios from 'axios'
-import { userPoolService } from '../services/user-pools.service'
+// import { userPoolService } from '../services/user-pools.service'
 import { SUCCESS } from '../services/routes.service'
 
 // Regular expression to validate email addresses
@@ -259,15 +259,15 @@ export default function Signup() {
 				},
 			]
 			let success = false
-			await userPoolService.signUp(username, password, attributes, null, (err, result) => {
-				if (err) {
-					console.log(err) //TODO handle errors separately
-					setErrors((prevErrors) => ({ ...prevErrors, general: err.message }))
-					return
-				}
-				success = true
-				console.log('user name is ' + result.user.getUsername())
-			})
+			// await userPoolService.signUp(username, password, attributes, null, (err, result) => {
+			// 	if (err) {
+			// 		console.log(err) //TODO handle errors separately
+			// 		setErrors((prevErrors) => ({ ...prevErrors, general: err.message }))
+			// 		return
+			// 	}
+			// 	success = true
+			// 	console.log('user name is ' + result.user.getUsername())
+			// })
 			return success
 		} catch (err) {
 			console.log(err)
