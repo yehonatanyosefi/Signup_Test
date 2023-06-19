@@ -2,13 +2,14 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import * as ml5 from 'ml5'
 import Sketch from 'react-p5'
 
+const PUBLIC_URL = process.env.PUBLIC_URL
 const poses = [
-	{ pose: 'Mountain', imgSrc: '/imgs/mountain.svg' },
-	{ pose: 'Tree', imgSrc: '/imgs/tree.svg' },
-	{ pose: 'Downward Dog', imgSrc: '/imgs/dog.svg' },
-	{ pose: 'Warrior I', imgSrc: '/imgs/warrior1.svg' },
-	{ pose: 'Warrior II', imgSrc: '/imgs/warrior2.svg' },
-	{ pose: 'Chair', imgSrc: '/imgs/chair.svg' },
+	{ pose: 'Mountain', imgSrc: `${PUBLIC_URL}/imgs/mountain.svg` },
+	{ pose: 'Tree', imgSrc: `${PUBLIC_URL}/imgs/tree.svg` },
+	{ pose: 'Downward Dog', imgSrc: `${PUBLIC_URL}/imgs/dog.svg` },
+	{ pose: 'Warrior I', imgSrc: `${PUBLIC_URL}/imgs/warrior1.svg` },
+	{ pose: 'Warrior II', imgSrc: `${PUBLIC_URL}/imgs/warrior2.svg` },
+	{ pose: 'Chair', imgSrc: `${PUBLIC_URL}/imgs/chair.svg` },
 ]
 const POSES_INTERVAL = 100
 const POSES_TIME = 10 * 1000
@@ -21,35 +22,54 @@ const Pose = () => {
 	const [pose, setPose] = useState(null)
 	const [skeleton, setSkeleton] = useState(null)
 	const [video, setVideo] = useState(null)
-	const [posesArray, setPosesArray] = useState(POSES_TO_DO_DEMO)
 	const [posesToDo, setPosesToDo] = useState([])
 	const [posesTime, setPosesTime] = useState(POSES_TIME)
 	const [currMessage, setCurrMessage] = useState('')
 	const [isModelLoaded, setIsYogaLoaded] = useState(false)
 	const [isPoseNetLoaded, setIsPoseNetLoaded] = useState(false)
-	const [isGameOn, setIsGameOn] = useState(false)
+	const [currPose, setCurrPose] = useState('')
+	const [gamePhase, setGamePhase] = useState('loading')
+	const [timerId, setTimerId] = useState(null)
 
+	const posesArray = useRef([])
+	const isGameOn = useRef(false)
 	const brainRef = useRef(null)
 
-	const disabledBtn = useMemo(() => !isPoseNetLoaded || !isModelLoaded, [isPoseNetLoaded, isModelLoaded])
+	const disabledBtn = useMemo(
+		() => !isPoseNetLoaded || !isModelLoaded || gamePhase === 'Ended',
+		[isPoseNetLoaded, isModelLoaded, gamePhase]
+	)
 	const btnTxt = useMemo(() => {
 		if (!isPoseNetLoaded || !isModelLoaded) return 'Loading...'
-		if (posesToDo.length === 0) return 'Target Video Start'
+		if (gamePhase === 'teaching') return 'Start Teaching'
 		return 'Start Game'
-	}, [isPoseNetLoaded, isModelLoaded, posesToDo.length])
+	}, [isPoseNetLoaded, isModelLoaded, posesToDo.length, gamePhase])
 
 	const handlePosesSetup = () => {
-		setPosesToDo(posesArray)
-		setPosesArray([])
+		setPosesToDo(posesArray.current)
+		posesArray.current = []
+		setCurrMessage(`Let's start, you need to repeat the last video`)
 	}
 
-	useEffect(handlePosesSetup, [])
+	useEffect(() => {
+		setGamePhase('teaching')
+	}, [])
 
 	const handleStart = () => {
 		if (!isPoseNetLoaded || !isModelLoaded) return setCurrMessage('Still Loading...')
-		setCurrMessage(`Game started, you have 10 seconds to do ${posesToDo[0]} pose`)
-		setIsGameOn(true)
-		classifyPose()
+		console.log(gamePhase)
+		if (gamePhase === 'teaching') {
+			// If we're in the 'teaching' phase, transition to 'testing'
+			setCurrMessage(`Let's start, you have 10 seconds to do any pose you like`)
+			setGamePhase('testing')
+			classifyPose()
+		} else if (gamePhase === 'testing') {
+			// If we're in the 'testing' phase, start the game
+			isGameOn.current = true
+			setCurrMessage(`Game started! You have 10 seconds to repeat the poses`)
+			setGamePhase('Started')
+			classifyPose()
+		}
 	}
 
 	const setup = (p5, canvasParentRef) => {
@@ -103,12 +123,10 @@ const Pose = () => {
 
 	const onYogaLoad = () => {
 		setIsYogaLoaded(true)
-		// setCurrMessage(isPoseNetLoaded ? 'You can start now' : 'Model loaded')
 	}
 
 	const onModelLoad = () => {
 		setIsPoseNetLoaded(true)
-		// setCurrMessage(isModelLoaded ? 'You can start now' : 'poseNet loaded')
 	}
 
 	const classifyPose = () => {
@@ -122,8 +140,9 @@ const Pose = () => {
 			}
 			brainRef.current.classify(inputs, gotResult)
 		} else {
-			console.log('Pose not found')
-			setPosesArray((prevPosesArray) => [...prevPosesArray, null])
+			// console.log('Pose not found')
+			setCurrPose('Not found')
+			posesArray.current = [...posesArray.current, null]
 		}
 		handleGameTik()
 	}
@@ -132,11 +151,14 @@ const Pose = () => {
 		setPosesTime((prevPosesTime) => {
 			const newPoseTime = prevPosesTime - POSES_INTERVAL
 
-			if (newPoseTime <= 0 + POSES_INTERVAL) {
-				handleGameOver()
+			if (newPoseTime <= 0) {
+				clearTimeout(timerId)
+				if (!isGameOn.current) handlePosesSetup()
+				else handleGameOver()
 				return POSES_TIME
 			} else {
-				setTimeout(classifyPose, POSES_INTERVAL)
+				const newTimerId = setTimeout(classifyPose, POSES_INTERVAL)
+				setTimerId(newTimerId)
 				return newPoseTime
 			}
 		})
@@ -144,44 +166,52 @@ const Pose = () => {
 
 	const handleGameOver = () => {
 		const successNumber = posesToDo.reduce((acc, curr, i) => {
-			if (curr === posesArray[i]) return acc + 1
+			if (curr === posesArray.current[i]) return acc + 1
 			return acc
 		}, 0)
 		const successRate = Math.round((successNumber / TOTAL_POSES_CHECKS) * 100)
 		setCurrMessage(`Game ended, your success rate is: ${successRate}%`)
-		setIsGameOn(false)
+		isGameOn.current = false
+		setGamePhase('Ended')
 	}
 
 	const gotResult = (error, results) => {
 		if (error) {
-			setPosesArray((prevPosesArray) => [...prevPosesArray, null])
+			posesArray.current = [...posesArray.current, null]
 			return console.error(error)
 		}
-		console.log(`pose:`, results[0].label)
-		setPosesArray((prevPosesArray) => [...prevPosesArray, results[0].label])
+		const pose = results[0].label
+		setCurrPose(pose)
+		posesArray.current = [...posesArray.current, pose]
 		// if (results[0].confidence < 0.7) {
-		// 	setPosesArray((prevPosesArray) => [...prevPosesArray, null])
+		// 	posesArray.current = [...posesArray.current, null]
 		// } else {
-		// 	setPosesArray((prevPosesArray) => [...prevPosesArray, results[0].label])
+		// 	posesArray.current = [...posesArray.current, pose]
 		// }
 	}
 
 	return (
-		<>
-			<Sketch setup={setup} draw={draw} />
-			<p>{currMessage}</p>
-			<p>{isGameOn ? posesTime : ''}</p>
-			<button onClick={handleStart} disabled={disabledBtn} className={disabledBtn ? 'disabled' : ''}>
+		<div className="pose-display">
+			<Sketch setup={setup} draw={draw} className="pose-canvas" />
+			<p className="message">{currMessage}</p>
+			{(isGameOn.current || gamePhase === 'testing') && <p className="time">{posesTime}</p>}
+			{(isGameOn.current || gamePhase === 'testing') && <p className="current-pose">Pose: {currPose}</p>}
+			<button
+				onClick={handleStart}
+				disabled={disabledBtn}
+				className={`start-button ${disabledBtn ? 'disabled' : ''}`}>
 				{btnTxt}
 			</button>
-			{/* <img src="/imgs/allow.png" />
-			{poses.map((pose) => (
-				<div key={pose.pose}>
-					<img src={pose.imgSrc} />
-					<div>{pose.pose}</div>
-				</div>
-			))} */}
-		</>
+			{/* <img src={`${PUBLIC_URL}/imgs/allow.png`} className="instruction-img" /> */}
+			<div className="pose-list">
+				{poses.map((pose) => (
+					<div key={pose.pose} className="pose-item">
+						<img src={pose.imgSrc} className="pose-img" />
+						<div className="pose-name">{pose.pose}</div>
+					</div>
+				))}
+			</div>
+		</div>
 	)
 }
 
