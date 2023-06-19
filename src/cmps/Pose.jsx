@@ -18,9 +18,6 @@ const poses = [
 const POSES_INTERVAL = 100
 const POSES_TIME = 10 * 1000
 const TOTAL_POSES_CHECKS = POSES_TIME / POSES_INTERVAL
-const POSES_TO_DO_DEMO = Array(TOTAL_POSES_CHECKS)
-	.fill()
-	.map(() => 'Mountain')
 
 const Pose = () => {
 	// Declare state variables for the component
