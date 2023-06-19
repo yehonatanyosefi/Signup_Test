@@ -130,7 +130,7 @@ const Pose = () => {
 	}
 
 	const classifyPose = () => {
-		if (pose) {
+		if (pose && skeleton.length) {
 			let inputs = []
 			for (let i = 0; i < pose.keypoints.length; i++) {
 				let x = pose.keypoints[i].position.x
@@ -138,7 +138,9 @@ const Pose = () => {
 				inputs.push(x)
 				inputs.push(y)
 			}
-			brainRef.current.classify(inputs, gotResult)
+			brainRef.current.classify(inputs, gotResults).catch((error) => {
+				console.error('Classification error:', error)
+			})
 		} else {
 			// console.log('Pose not found')
 			setCurrPose('Not found')
@@ -175,12 +177,14 @@ const Pose = () => {
 		setGamePhase('Ended')
 	}
 
-	const gotResult = (error, results) => {
-		if (error) {
+	const gotResults = (error, results) => {
+		console.log(`results:`, results)
+		if (error || !results) {
 			posesArray.current = [...posesArray.current, null]
-			return console.error(error)
+			return
 		}
 		const pose = results[0].label
+		console.log(`pose:`, pose)
 		setCurrPose(pose)
 		posesArray.current = [...posesArray.current, pose]
 		// if (results[0].confidence < 0.7) {
@@ -192,6 +196,14 @@ const Pose = () => {
 
 	return (
 		<div className="pose-display">
+			<div className="pose-list">
+				{poses.map((pose) => (
+					<div key={pose.pose} className="pose-item">
+						<img src={pose.imgSrc} className="pose-img" />
+						<div className="pose-name">{pose.pose}</div>
+					</div>
+				))}
+			</div>
 			<Sketch setup={setup} draw={draw} className="pose-canvas" />
 			<p className="message">{currMessage}</p>
 			{(isGameOn.current || gamePhase === 'testing') && <p className="time">{posesTime}</p>}
@@ -203,14 +215,6 @@ const Pose = () => {
 				{btnTxt}
 			</button>
 			{/* <img src={`${PUBLIC_URL}/imgs/allow.png`} className="instruction-img" /> */}
-			<div className="pose-list">
-				{poses.map((pose) => (
-					<div key={pose.pose} className="pose-item">
-						<img src={pose.imgSrc} className="pose-img" />
-						<div className="pose-name">{pose.pose}</div>
-					</div>
-				))}
-			</div>
 		</div>
 	)
 }
