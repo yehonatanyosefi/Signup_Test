@@ -1,7 +1,9 @@
+// Importing necessary hooks from React and machine learning model ml5
 import { useState, useMemo, useRef, useEffect } from 'react'
 import * as ml5 from 'ml5'
 import Sketch from 'react-p5'
 
+// Define base URL for images and poses data
 const PUBLIC_URL = process.env.PUBLIC_URL
 const poses = [
 	{ pose: 'Mountain', imgSrc: `${PUBLIC_URL}/imgs/mountain.svg` },
@@ -11,6 +13,8 @@ const poses = [
 	{ pose: 'Warrior II', imgSrc: `${PUBLIC_URL}/imgs/warrior2.svg` },
 	{ pose: 'Chair', imgSrc: `${PUBLIC_URL}/imgs/chair.svg` },
 ]
+
+// Define constants for poses interval and duration
 const POSES_INTERVAL = 100
 const POSES_TIME = 10 * 1000
 const TOTAL_POSES_CHECKS = POSES_TIME / POSES_INTERVAL
@@ -19,6 +23,7 @@ const POSES_TO_DO_DEMO = Array(TOTAL_POSES_CHECKS)
 	.map(() => 'Mountain')
 
 const Pose = () => {
+	// Declare state variables for the component
 	const [pose, setPose] = useState(null)
 	const [skeleton, setSkeleton] = useState(null)
 	const [video, setVideo] = useState(null)
@@ -31,10 +36,12 @@ const Pose = () => {
 	const [gamePhase, setGamePhase] = useState('loading')
 	const [timerId, setTimerId] = useState(null)
 
+	// useRef hooks to store mutable values that survive re-renders
 	const posesArray = useRef([])
 	const isGameOn = useRef(false)
 	const brainRef = useRef(null)
 
+	// useMemo hooks to optimize performance by memoizing complex computations
 	const disabledBtn = useMemo(
 		() => !isPoseNetLoaded || !isModelLoaded || gamePhase === 'Ended',
 		[isPoseNetLoaded, isModelLoaded, gamePhase]
@@ -43,18 +50,22 @@ const Pose = () => {
 		if (!isPoseNetLoaded || !isModelLoaded) return 'Loading...'
 		if (gamePhase === 'teaching') return 'Start Teaching'
 		return 'Start Game'
+		// Conditionals for button text based on model loading status and game phase
 	}, [isPoseNetLoaded, isModelLoaded, posesToDo.length, gamePhase])
 
+	// Handles the setup of the poses
 	const handlePosesSetup = () => {
 		setPosesToDo(posesArray.current)
 		posesArray.current = []
 		setCurrMessage(`Let's start, you need to repeat the last video`)
 	}
 
+	// useEffect to initialize game phase
 	useEffect(() => {
 		setGamePhase('teaching')
 	}, [])
 
+	// Handles start of the game/teaching phase
 	const handleStart = () => {
 		if (!isPoseNetLoaded || !isModelLoaded) return setCurrMessage('Still Loading...')
 		console.log(gamePhase)
@@ -72,6 +83,7 @@ const Pose = () => {
 		}
 	}
 
+	// Sets up video and PoseNet model
 	const setup = (p5, canvasParentRef) => {
 		p5.createCanvas(640, 480).parent(canvasParentRef)
 		let video = p5.createCapture(p5.VIDEO)
@@ -95,13 +107,14 @@ const Pose = () => {
 
 		brainRef.current = ml5.neuralNetwork(options)
 		const modelInfo = {
-			model: '/models/model2.json',
-			metadata: '/models/model_meta2.json',
-			weights: '/models/model.weights2.bin',
+			model: `${PUBLIC_URL}/models/model2.json`,
+			metadata: `${PUBLIC_URL}/models/model_meta2.json`,
+			weights: `${PUBLIC_URL}/models/model.weights2.bin`,
 		}
 		brainRef.current.load(modelInfo, onYogaLoad)
 	}
 
+	// Draws the pose on canvas
 	const draw = (p5) => {
 		//NO useState here
 		p5.background(0)
@@ -121,14 +134,15 @@ const Pose = () => {
 		p5.pop()
 	}
 
+	// Callback functions for when the models are loaded
 	const onYogaLoad = () => {
 		setIsYogaLoaded(true)
 	}
-
 	const onModelLoad = () => {
 		setIsPoseNetLoaded(true)
 	}
 
+	// Classifies the current pose
 	const classifyPose = () => {
 		if (pose && skeleton.length) {
 			let inputs = []
@@ -149,6 +163,7 @@ const Pose = () => {
 		handleGameTik()
 	}
 
+	// Handles the game timer tick
 	const handleGameTik = () => {
 		setPosesTime((prevPosesTime) => {
 			const newPoseTime = prevPosesTime - POSES_INTERVAL
@@ -166,6 +181,7 @@ const Pose = () => {
 		})
 	}
 
+	// Handles game over state
 	const handleGameOver = () => {
 		const successNumber = posesToDo.reduce((acc, curr, i) => {
 			if (curr === posesArray.current[i]) return acc + 1
@@ -177,6 +193,7 @@ const Pose = () => {
 		setGamePhase('Ended')
 	}
 
+	// Handles the pose classification results
 	const gotResults = (error, results) => {
 		console.log(`results:`, results)
 		if (error || !results) {
