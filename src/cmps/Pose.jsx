@@ -1,6 +1,6 @@
 // Importing necessary hooks from React and machine learning model ml5
 import { useState, useMemo, useRef, useEffect } from 'react'
-import * as ml5 from 'ml5'
+// import * as ml5 from 'ml5'
 import Sketch from 'react-p5'
 
 // Define base URL for images and poses data
@@ -20,7 +20,27 @@ const POSES_TIME = 10 * 1000
 const TOTAL_POSES_CHECKS = POSES_TIME / POSES_INTERVAL
 
 const Pose = () => {
+	// Mounting ml5 minified
+	useEffect(() => {
+		const script = document.createElement('script')
+		script.src = `${PUBLIC_URL}/lib/ml5.min.js`
+		script.async = true
+
+		script.onload = () => {
+			// set state to update component after the script is loaded
+			setIsMl5Loaded(true)
+		}
+
+		document.body.appendChild(script)
+
+		// Cleanup function to remove the script if the component unmounts
+		return () => {
+			document.body.removeChild(script)
+		}
+	}, [])
+
 	// Declare state variables for the component
+	const [isMl5Loaded, setIsMl5Loaded] = useState(false)
 	const [pose, setPose] = useState(null)
 	const [skeleton, setSkeleton] = useState(null)
 	const [video, setVideo] = useState(null)
@@ -48,7 +68,7 @@ const Pose = () => {
 		if (gamePhase === 'teaching') return 'Start Teaching'
 		return 'Start Game'
 		// Conditionals for button text based on model loading status and game phase
-	}, [isPoseNetLoaded, isModelLoaded, posesToDo.length, gamePhase])
+	}, [isPoseNetLoaded, isModelLoaded, gamePhase])
 
 	// Handles the setup of the poses
 	const handlePosesSetup = () => {
@@ -87,7 +107,7 @@ const Pose = () => {
 		video.hide()
 		setVideo(video)
 
-		let poseNet = ml5.poseNet(video, onModelLoad)
+		let poseNet = window.ml5.poseNet(video, onModelLoad)
 		poseNet.on('pose', (poses) => {
 			if (poses.length > 0) {
 				setPose(poses[0].pose)
@@ -102,7 +122,7 @@ const Pose = () => {
 			debug: true,
 		}
 
-		brainRef.current = ml5.neuralNetwork(options)
+		brainRef.current = window.ml5.neuralNetwork(options)
 		const modelInfo = {
 			model: `${PUBLIC_URL}/models/model2.json`,
 			metadata: `${PUBLIC_URL}/models/model_meta2.json`,
@@ -141,23 +161,27 @@ const Pose = () => {
 
 	// Classifies the current pose
 	const classifyPose = () => {
-		if (pose && skeleton.length) {
-			let inputs = []
-			for (let i = 0; i < pose.keypoints.length; i++) {
-				let x = pose.keypoints[i].position.x
-				let y = pose.keypoints[i].position.y
-				inputs.push(x)
-				inputs.push(y)
+		try {
+			if (pose && skeleton.length) {
+				let inputs = []
+				for (let i = 0; i < pose.keypoints.length; i++) {
+					let x = pose.keypoints[i].position.x
+					let y = pose.keypoints[i].position.y
+					inputs.push(x)
+					inputs.push(y)
+				}
+				brainRef.current.classify(inputs, gotResults).catch((error) => {
+					console.error('Classification error:', error)
+				})
+			} else {
+				// console.log('Pose not found')
+				setCurrPose('Not found')
+				posesArray.current = [...posesArray.current, null]
 			}
-			brainRef.current.classify(inputs, gotResults).catch((error) => {
-				console.error('Classification error:', error)
-			})
-		} else {
-			// console.log('Pose not found')
-			setCurrPose('Not found')
-			posesArray.current = [...posesArray.current, null]
+			handleGameTik()
+		} catch (error) {
+			console.log('Caught Error', error)
 		}
-		handleGameTik()
 	}
 
 	// Handles the game timer tick
@@ -192,20 +216,21 @@ const Pose = () => {
 
 	// Handles the pose classification results
 	const gotResults = (error, results) => {
-		console.log(`results:`, results)
+		// console.log(`results:`, results)
 		if (error || !results) {
 			posesArray.current = [...posesArray.current, null]
 			return
 		}
-		const pose = results[0].label
-		console.log(`pose:`, pose)
-		setCurrPose(pose)
-		posesArray.current = [...posesArray.current, pose]
-		// if (results[0].confidence < 0.7) {
-		// 	posesArray.current = [...posesArray.current, null]
-		// } else {
-		// 	posesArray.current = [...posesArray.current, pose]
-		// }
+		if (results[0].confidence < 0.7) {
+			setCurrPose('Pose not found')
+			posesArray.current = [...posesArray.current, null]
+		} else {
+			const poseNum = parseInt(results[0].label)
+			const pose = poses[poseNum]
+			// console.log(`pose:`, pose)
+			setCurrPose(pose.pose)
+			posesArray.current = [...posesArray.current, pose]
+		}
 	}
 
 	return (
@@ -218,10 +243,10 @@ const Pose = () => {
 					</div>
 				))}
 			</div>
-			<Sketch setup={setup} draw={draw} className="pose-canvas" />
+			{(isGameOn.current || gamePhase === 'testing') && <p className="current-pose">Pose: {currPose}</p>}
+			{isMl5Loaded && <Sketch setup={setup} draw={draw} className="pose-canvas" />}
 			<p className="message">{currMessage}</p>
 			{(isGameOn.current || gamePhase === 'testing') && <p className="time">{posesTime}</p>}
-			{(isGameOn.current || gamePhase === 'testing') && <p className="current-pose">Pose: {currPose}</p>}
 			<button
 				onClick={handleStart}
 				disabled={disabledBtn}
