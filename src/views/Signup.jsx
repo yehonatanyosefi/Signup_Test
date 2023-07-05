@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react'
-// import { doesEmailAddressExist, signup } from '../services/user.service'
-import { Link, useNavigate } from 'react-router-dom'
-import { SvgIcon } from '../cmps/util/SvgIcon'
+import { useEffect, useState, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { doSignup } from '../store/actions/user.actions'
+import { useNavigate } from 'react-router-dom'
 import { useCallbackState } from '../customHooks/useCallbackState'
-import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios'
-// import { userPoolService } from '../services/user-pools.service'
 import { SUCCESS } from '../services/routes.service'
+
+import MainWrapper from '../cmps/MainWrapper'
+import SignupForm from '../cmps/SignupForm'
+import SignupWithSocial from '../cmps/SignupWithSocial'
+
+import jwtDecode from 'jwt-decode'
 
 // Regular expression to validate email addresses
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -14,8 +17,16 @@ const LOWERCASE_REGEX = /[a-z]/
 const UPPERCASE_REGEX = /[A-Z]/
 const SPECIAL_CHARACTER_REGEX = /[!@#$%^&*]/
 
+function SignupSelector(props) {
+	const [isManualSignup, setIsManualSignup] = useState(false)
+	if (!isManualSignup) return <SignupWithSocial setIsManualSignup={setIsManualSignup} {...props} />
+	return <SignupForm {...props} />
+}
+
 export default function Signup() {
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
+	const isLoading = useSelector((state) => state.userModule.isLoading)
 
 	useEffect(() => {
 		document.title = 'Eramorph - Signup'
@@ -29,6 +40,7 @@ export default function Signup() {
 		password: '',
 		confirmPassword: '',
 	}
+	const [isFloating, setIsFloating] = useState(true)
 	// State for user's registration information
 	const [credentials, setCredentials] = useCallbackState(JSON.parse(JSON.stringify(blankFields)))
 	// State for errors in the registration form
@@ -58,64 +70,6 @@ export default function Signup() {
 	const areSomeFieldsEmpty = credentialsValues.some((field) => field === '')
 	const errorsArr = Object.values(errors)
 	const areThereErrors = errorsArr.some((field) => field !== '')
-
-	// TODO: ... Google login code here:
-	// const [profile, setProfile] = useState([])
-	// const login = useGoogleLogin({
-	// 	onSuccess: (codeResponse) => setUser(codeResponse),
-	// 	onError: (error) => console.log('Login Failed:', error),
-	// })
-
-	// useEffect(() => {
-	// 	if (user) {
-	// 		axios
-	// 			.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-	// 				headers: {
-	// 					Authorization: `Bearer ${user.access_token}`,
-	// 					Accept: 'application/json',
-	// 				},
-	// 			})
-	// 			.then((res) => {
-	// 				setProfile(res.data)
-	// 			})
-	// 			.catch((err) => console.log(err))
-	// 	}
-	// }, [user])
-
-	// const logOut = () => {
-	// 	googleLogout()
-	// 	setProfile(null)
-	// }
-	// const login = useGoogleLogin({
-	// 	onSuccess: async (codeResponse) => {
-	// 		if (codeResponse && codeResponse.access_token) {
-	// 			// setUser({ ...codeResponse, access_token: codeResponse.access_token })
-	// 			// Fetch user profile data
-	// 			axios
-	// 				.get(
-	// 					`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`,
-	// 					{
-	// 						headers: {
-	// 							Authorization: `Bearer ${codeResponse.access_token}`,
-	// 							Accept: 'application/json',
-	// 						},
-	// 					}
-	// 				)
-	// 				.then(async (res) => {
-	// 					if (res.data) {
-	// 						// setProfile(res.data)
-	// 						// setFullname(res.data.name)
-	// 						// await signupUser(res.data.name)
-	// 					}
-	// 					console.log('Profile data:', res.data)
-	// 				})
-	// 				.catch((err) => console.log(err))
-	// 		} else {
-	// 			console.error('Login Failed: codeResponse or accessToken is undefined')
-	// 		}
-	// 	},
-	// 	onError: (error) => console.error('Login Failed:', error),
-	// })
 
 	// Function to check if a specific field in the form has an error
 	function checkError(field, credentials) {
@@ -206,19 +160,6 @@ export default function Signup() {
 			setErrors((prevErrors) => ({ ...prevErrors, general: 'Please remove spaces.' }))
 			return false
 		}
-		try {
-			// const doesEmailAddressExist = await doesEmailAddressExist(username)
-			// if (doesEmailAddressExist) {
-			// 	setErrors((prevErrors)=>({...prevErrors,general:'That email address is already taken, please try another.'})
-			// 	return false
-			// }
-		} catch (err) {
-			setErrors((prevErrors) => ({
-				...prevErrors,
-				general: 'Error in signup request. Please try again.',
-			}))
-			return false
-		}
 		return true
 	}
 
@@ -241,52 +182,29 @@ export default function Signup() {
 		checkError(name, credentials)
 	}
 
-	async function signUp() {
-		try {
-			const { username, password, firstName, lastName, emailAddress } = credentials
-			const attributes = [
-				{
-					Name: 'email',
-					Value: emailAddress,
-				},
-				{
-					Name: 'given_name',
-					Value: firstName,
-				},
-				{
-					Name: 'family_name',
-					Value: lastName,
-				},
-			]
-			let success = false
-			// await userPoolService.signUp(username, password, attributes, null, (err, result) => {
-			// 	if (err) {
-			// 		console.log(err) //TODO handle errors separately
-			// 		setErrors((prevErrors) => ({ ...prevErrors, general: err.message }))
-			// 		return
-			// 	}
-			// 	success = true
-			// 	console.log('user name is ' + result.user.getUsername())
-			// })
-			return success
-		} catch (err) {
-			console.log(err)
-			throw err
-		}
-	}
+	const signupUser = useCallback(
+		async (signupCredentials) => {
+			try {
+				dispatch(doSignup(signupCredentials))
+				setErrors('')
+				navigate(SUCCESS)
+			} catch (err) {
+				//TODO: ask vita if to show error message or move to another page
+				console.log('Error in signup: ', err)
+				// navigate(ERROR)
+				setErrors('Error in signup request. Please try again.')
+				throw err
+			}
+		},
+		[dispatch, navigate]
+	)
 
 	// Event handler for the signup form
 	const handleSignup = async (ev) => {
 		ev.preventDefault()
 		if (!isValid()) return
-		try {
-			await signUp()
-			navigate(SUCCESS)
-			setErrors('')
-		} catch (err) {
-			console.error('Error in signup: ', err)
-			setErrors('Error in signup request. Please try again.')
-		}
+		const signupCredentials = credentials
+		signupUser(signupCredentials)
 	}
 
 	// Function that toggles the visibility of the password inputs
@@ -300,107 +218,90 @@ export default function Signup() {
 			})
 		)
 	}
-	const [isFloating, setIsFloating] = useState(true)
 	const handleFloatToggle = (ev) => {
 		setIsFloating(!isFloating)
 	}
 
+	const handleGoogleAuthCallback = useCallback(
+		(response) => {
+			const credentials = jwtDecode(response.credential)
+			//Google user object:
+			// aud: '871523970118-hi2gm3r18iflufpcgg72utl38f3l686s.apps.googleusercontent.com'
+			// azp: '871523970118-hi2gm3r18iflufpcgg72utl38f3l686s.apps.googleusercontent.com'
+			// email: 'yehonatanmind@gmail.com'
+			// email_verified: true
+			// exp: 1688553562
+			// family_name: 'Yosefi'
+			// given_name: 'Yehonatan'
+			// iat: 1688549962
+			// iss: 'https://accounts.google.com'
+			// jti: '4a40fba63b36fb6b08bc794de8d87ef0c286c570'
+			// name: 'Yehonatan Yosefi'
+			// nbf: 1688549662
+			// picture: 'https://lh3.googleusercontent.com/a/AAcHTtcSWYnBw2MC45GTtQo922j3wuh_b7MGAyW222JAEZs=s96-c'
+			// sub: '101111312956968306746'
+			// const user = userService.prepareData(userObject)
+			signupUser(credentials)
+		},
+		[signupUser]
+	)
+	const handleFacebookSignup = async (ev) => {
+		alert('facebook')
+	}
+
+	useEffect(() => {
+		const script = document.createElement('script')
+		script.src = `https://accounts.google.com/gsi/client`
+		script.async = true
+
+		script.onload = () => {
+			// set state to update component after the script is loaded
+			const googleAuth = window.google
+			googleAuth.accounts.id.initialize({
+				client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+				callback: handleGoogleAuthCallback,
+			})
+
+			googleAuth.accounts.id.renderButton(document.getElementById('google-signIn-div'), {
+				theme: 'outline',
+				size: 'large',
+			})
+		}
+
+		document.body.appendChild(script)
+
+		// Cleanup function to remove the script if the component unmounts
+		return () => {
+			document.body.removeChild(script)
+		}
+	}, [handleGoogleAuthCallback])
+
+	if (isLoading)
+		return (
+			<MainWrapper>
+				<div className="signup">Loading...</div>
+			</MainWrapper>
+		)
+
 	return (
-		<div className="signup">
-			<SvgIcon iconName={'bg-mobile-rounded-svg'} className="bg-mobile-rounded-svg" />
-			<div className="lines first-line"></div>
-			<div className="lines second-line"></div>
-			<div className="header">
-				<Link to={'/'}>
-					<SvgIcon iconName="logo" className="logo" alt="Eramorph logo" />
-				</Link>
-				<h1 className="signup-header">Eramorph</h1>
-				<h5 className="sub-header">Evolve. Constantly.</h5>
-			</div>
-			<label htmlFor="float">
-				Toggle Float
-				<input
-					name="float"
-					id="float"
-					type="checkbox"
-					checked={isFloating}
-					onChange={(ev) => handleFloatToggle(ev)}
+		<MainWrapper>
+			<div className="signup">
+				<SignupSelector
+					credentials={credentials}
+					errors={errors}
+					inputFields={inputFields}
+					handleChange={handleChange}
+					handleFocus={handleFocus}
+					handleBlur={handleBlur}
+					handleSignup={handleSignup}
+					togglePassVisibility={togglePassVisibility}
+					isFloating={isFloating}
+					handleFloatToggle={handleFloatToggle}
+					areThereErrors={areThereErrors}
+					areSomeFieldsEmpty={areSomeFieldsEmpty}
+					handleFacebookSignup={handleFacebookSignup}
 				/>
-			</label>
-			<form onSubmit={handleSignup} method="POST">
-				{inputFields.map((inputField, idx) => {
-					let { type, placeholder, name, hasBeenChecked } = inputField
-					let errorClass = ''
-					if (hasBeenChecked) {
-						if (errors[name]) errorClass = 'error'
-						else if (!errors[name]) errorClass = 'success'
-					}
-					if (type === 'password' && inputField.isVisible) {
-						type = 'text'
-					}
-					return (
-						<div key={idx} className={`input-wrapper`}>
-							<input
-								id={name}
-								className={errorClass}
-								type={type}
-								placeholder={isFloating ? '' : placeholder}
-								aria-label={`Enter your ${placeholder}`}
-								name={name}
-								value={credentials[name]}
-								onChange={(ev) => handleChange(ev)}
-								onFocus={(ev) => handleFocus(ev)}
-								onBlur={(ev) => handleBlur(ev)}
-								aria-required="true"
-								aria-invalid={!!errors[name]}
-								required
-								pattern=".*"
-							/>
-							<label htmlFor={name} className={isFloating ? '' : 'hidden'}>
-								{placeholder}
-							</label>
-							{hasBeenChecked && (
-								<SvgIcon
-									iconName={errorClass}
-									className={`error ${errorClass === 'error' ? '' : 'hide-icon'}`}
-								/>
-							)}
-							{hasBeenChecked && (
-								<SvgIcon
-									iconName={errorClass}
-									className={`success ${errorClass === 'success' ? '' : 'hide-icon'}`}
-								/>
-							)}
-							{errors[name] && (
-								<div className="error-msg" role="alert">
-									{errors[name]}
-								</div>
-							)}
-							{(type === 'password' || inputField?.isVisible) && (
-								<SvgIcon
-									iconName="eye"
-									className={`toggle-eye ${inputField.isVisible ? '' : 'hide-icon'}`}
-									onClick={() => togglePassVisibility(name)}
-								/>
-							)}
-							{(type === 'password' || inputField?.isVisible) && (
-								<SvgIcon
-									iconName="eye-off"
-									className={`eye-off toggle-eye ${inputField.isVisible ? 'hide-icon' : ''}`}
-									onClick={() => togglePassVisibility(name)}
-								/>
-							)}
-						</div>
-					)
-				})}
-				<button
-					type="submit"
-					disabled={areThereErrors || areSomeFieldsEmpty}
-					className={`submit-btn ${areThereErrors || areSomeFieldsEmpty ? 'disabled' : ''}`}>
-					Sign up and start evolving
-				</button>
-				{errors.general && <p className="error-msg">{errors.general}</p>}
-			</form>
-		</div>
+			</div>
+		</MainWrapper>
 	)
 }

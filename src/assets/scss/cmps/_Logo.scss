@@ -1,0 +1,21 @@
+.logo-header {
+	@include flex-center;
+	flex-direction: column;
+	margin-block-end: rem(90px);
+	.logo {
+		margin-block-start: rem(32px);
+		margin-block-end: rem(7px);
+		width: 50px;
+	}
+	h1 {
+		font-family: 'SourceSansPro-Regular', sans-serif;
+		color: black;
+		font-size: rem(34px);
+	}
+	.sub-header {
+		font-family: 'SourceSansPro-Bold', sans-serif;
+		color: $accent-clr;
+		font-weight: bold;
+		font-size: rem(16px);
+	}
+}

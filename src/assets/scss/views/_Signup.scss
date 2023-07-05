@@ -4,57 +4,41 @@
 }
 
 .signup {
-	@include flex-center;
-	flex-direction: column;
-	position: relative;
-	min-height: 100vh;
-	width: 100vw;
-	.bg-mobile-rounded-svg {
-		position: absolute;
-		top: -110px;
-		left: 50%;
-		translate: -50%;
+	width: 300px;
+	input {
+		padding: $input-padding;
+		width: 100%;
 		height: 100%;
-		z-index: -1;
+		border: none;
+		outline: none;
 	}
-	.lines {
-		&.first-line {
-			left: calc(50% - 150px - 10px);
-			translate: -150% 0;
+	form,
+	.social-signup {
+		label {
+			font-size: 14px;
+			color: lighten($placeholder-clr, 25%);
+			padding: $input-padding;
+			font-family: 'SourceSansPro-SemiBold', sans-serif;
+			position: absolute;
+			top: 0;
+			left: 0;
+			transition: 0.2s ease all;
+			pointer-events: none;
+			&.hidden {
+				display: none;
+			}
 		}
-		&.second-line {
-			left: calc(50% + 150px);
-			translate: 100% 0;
+
+		input:focus + label,
+		input:valid + label {
+			font-size: 12px;
+			top: -10px;
+			left: 10px;
+			background: $white-font-clr;
+			padding: 0px 5px 0px 5px;
+			margin-inline-start: 10px;
+			border-radius: $input-radius;
 		}
-		width: 16px;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		border-left: 1px solid $line-clr;
-		border-right: 1px solid $line-clr;
-	}
-	.header {
-		@include flex-center;
-		flex-direction: column;
-		margin-block-end: rem(90px);
-		.logo {
-			margin-block-start: rem(32px);
-			margin-block-end: rem(7px);
-			width: 50px;
-		}
-		h1 {
-			font-family: 'SourceSansPro-Regular', sans-serif;
-			color: black;
-			font-size: rem(34px);
-		}
-		.sub-header {
-			font-family: 'SourceSansPro-Bold', sans-serif;
-			color: $accent-clr;
-			font-weight: bold;
-			font-size: rem(16px);
-		}
-	}
-	form {
 		color: #333333;
 		display: flex;
 		flex-direction: column;
@@ -67,31 +51,6 @@
 			position: relative;
 			font-family: 'SourceSansPro-SemiBold', sans-serif;
 
-			label {
-				font-size: 14px;
-				color: lighten($placeholder-clr, 25%);
-				padding: $input-padding;
-				font-family: 'SourceSansPro-SemiBold', sans-serif;
-				position: absolute;
-				top: 0;
-				left: 0;
-				transition: 0.2s ease all;
-				pointer-events: none;
-				&.hidden {
-					display: none;
-				}
-			}
-
-			input:focus + label,
-			input:valid + label {
-				font-size: 12px;
-				top: -10px;
-				left: 10px;
-				background: $white-font-clr;
-				padding: 0px 5px 0px 5px;
-				margin-inline-start: 10px;
-				border-radius: $input-radius;
-			}
 			input {
 				// &:focus {
 				// 	border: 1px solid $accent-clr;
@@ -102,11 +61,6 @@
 				&.error {
 					border: 1px solid $error-clr;
 				}
-				padding: $input-padding;
-				width: 100%;
-				height: 100%;
-				border: none;
-				outline: none;
 			}
 			.svg-icon {
 				position: absolute;
@@ -181,16 +135,25 @@
 				}
 			}
 		}
-		.submit-btn {
-			font-family: 'SourceSansPro-Regular', sans-serif;
-			@include wide-btn;
-			background-color: $accent-clr;
-			color: $white-font-clr;
-			transition: opacity 0.3s ease-in-out;
-			&.disabled {
-				opacity: 40%;
-				cursor: not-allowed;
-			}
+	}
+	.submit-btn {
+		font-family: 'SourceSansPro-Regular', sans-serif;
+		@include wide-btn;
+		background-color: $accent-clr;
+		color: $white-font-clr;
+		transition: opacity 0.3s ease-in-out;
+		&.disabled {
+			opacity: 40%;
+			cursor: not-allowed;
+		}
+	}
+	.social-signup {
+		img {
+			height: 30px;
+		}
+		.google-signup {
+			display: flex;
+			justify-content: center;
 		}
 	}
 }

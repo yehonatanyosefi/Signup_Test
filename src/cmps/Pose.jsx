@@ -227,7 +227,6 @@ const Pose = () => {
 		} else {
 			const poseNum = parseInt(results[0].label)
 			const pose = poses[poseNum]
-			// console.log(`pose:`, pose)
 			setCurrPose(pose.pose)
 			posesArray.current = [...posesArray.current, pose]
 		}
@@ -238,7 +237,7 @@ const Pose = () => {
 			<div className="pose-list">
 				{poses.map((pose) => (
 					<div key={pose.pose} className="pose-item">
-						<img src={pose.imgSrc} className="pose-img" />
+						<img src={pose.imgSrc} className="pose-img" alt={`${pose.pose} Pose`} />
 						<div className="pose-name">{pose.pose}</div>
 					</div>
 				))}

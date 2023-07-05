@@ -16,8 +16,12 @@
 
 // Views
 @import 'views/Signup';
+@import 'views/Success';
+@import 'views/Error';
 @import 'views/Home';
 @import 'views/Yoga';
 
 // Components
 @import 'cmps/Pose';
+@import 'cmps/Logo';
+@import 'cmps/MainWrapper';

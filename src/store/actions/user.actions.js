@@ -1,47 +1,23 @@
-import { userService } from "../../services/user.service"
-import { SET_USER } from "../reducers/user.reducer"
+import { userService } from '../../services/user.service'
+import { SET_USER, SET_LOADING } from '../reducers/user.reducer'
 
-export function loadUser() {
-    return async (dispatch, getState) => {
-        try {
-            const loggedInUser = await userService.getUser()
-            const action = {
-                type: SET_USER,
-                loggedInUser
-            }
-            dispatch(action)
-        } catch (error) {
-            console.error('error:', error)
-        }
-    }
-}
+const setLoading = { type: SET_LOADING, isLoading: true }
+const setFinishedLoading = { type: SET_LOADING, isLoading: false }
 
-export function signup(username, password) {
-    return async (dispatch, getState) => {
-        try {
-            const user = await userService.signup(username, password)
-            const action = {
-                type: SET_USER,
-                user
-            }
-            dispatch(action)
-        } catch (error) {
-            console.error('error:', error)
-        }
-    }
-}
-
-export function spendCoins(contact, amount) {
-    return async (dispatch, getState) => {
-        try {
-            const loggedInUser = await userService.addMove(contact, amount)
-            const action = {
-                type: SET_USER,
-                loggedInUser
-            }
-            dispatch(action)
-        } catch (error) {
-            console.error('error:', error)
-        }
-    }
+export function doSignup(credentials) {
+	return async (dispatch, getState) => {
+		try {
+			dispatch(setLoading)
+			const user = await userService.signup(credentials)
+			dispatch(setFinishedLoading)
+			const action = {
+				type: SET_USER,
+				user,
+			}
+			dispatch(action)
+		} catch (error) {
+			console.error('error:', error)
+			throw error
+		}
+	}
 }

@@ -1,4 +1,5 @@
 export const HOME = '/home'
 export const SIGN_UP = '/'
 export const SUCCESS = '/success'
+export const ERROR = '/error'
 export const YOGA = '/yoga'
