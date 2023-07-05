@@ -2,7 +2,6 @@
 	"name": "eramorph",
 	"version": "0.1.0",
 	"private": true,
-	"homepage": ".",
 	"dependencies": {
 		"@testing-library/jest-dom": "^5.16.5",
 		"@testing-library/react": "^13.4.0",
@@ -23,7 +22,7 @@
 	},
 	"scripts": {
 		"start": "set HTTPS=true&& react-scripts --max-old-space-size=4096 start",
-		"build": "react-scripts build && mv build ../backend/public",
+		"build": "react-dotenv && react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"predeploy": "npm run build"
