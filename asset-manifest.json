@@ -1,9 +1,9 @@
 {
   "files": {
-    "main.css": "/eramorph/static/css/main.20360e94.css",
-    "main.js": "/eramorph/static/js/main.3e5e23bf.js",
+    "main.css": "/eramorph/static/css/main.98d165a6.css",
+    "main.js": "/eramorph/static/js/main.082a6a89.js",
     "static/js/52.2f940943.chunk.js": "/eramorph/static/js/52.2f940943.chunk.js",
-    "static/js/857.bd553d4b.chunk.js": "/eramorph/static/js/857.bd553d4b.chunk.js",
+    "static/js/857.44f0485a.chunk.js": "/eramorph/static/js/857.44f0485a.chunk.js",
     "static/js/939.35092c6b.chunk.js": "/eramorph/static/js/939.35092c6b.chunk.js",
     "static/js/218.cadc101b.chunk.js": "/eramorph/static/js/218.cadc101b.chunk.js",
     "static/js/885.aaddd3dc.chunk.js": "/eramorph/static/js/885.aaddd3dc.chunk.js",
@@ -16,10 +16,10 @@
     "static/media/SourceSansPro-SemiBold.ttf": "/eramorph/static/media/SourceSansPro-SemiBold.a8dc1b60c9ad609f0b4a.ttf",
     "static/media/SourceSansPro-Bold.ttf": "/eramorph/static/media/SourceSansPro-Bold.4a6e47d1db848f5e8218.ttf",
     "index.html": "/eramorph/index.html",
-    "main.20360e94.css.map": "/eramorph/static/css/main.20360e94.css.map",
-    "main.3e5e23bf.js.map": "/eramorph/static/js/main.3e5e23bf.js.map",
+    "main.98d165a6.css.map": "/eramorph/static/css/main.98d165a6.css.map",
+    "main.082a6a89.js.map": "/eramorph/static/js/main.082a6a89.js.map",
     "52.2f940943.chunk.js.map": "/eramorph/static/js/52.2f940943.chunk.js.map",
-    "857.bd553d4b.chunk.js.map": "/eramorph/static/js/857.bd553d4b.chunk.js.map",
+    "857.44f0485a.chunk.js.map": "/eramorph/static/js/857.44f0485a.chunk.js.map",
     "939.35092c6b.chunk.js.map": "/eramorph/static/js/939.35092c6b.chunk.js.map",
     "218.cadc101b.chunk.js.map": "/eramorph/static/js/218.cadc101b.chunk.js.map",
     "885.aaddd3dc.chunk.js.map": "/eramorph/static/js/885.aaddd3dc.chunk.js.map",
@@ -30,7 +30,7 @@
     "154.0a7ac2b0.chunk.js.map": "/eramorph/static/js/154.0a7ac2b0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.20360e94.css",
-    "static/js/main.3e5e23bf.js"
+    "static/css/main.98d165a6.css",
+    "static/js/main.082a6a89.js"
   ]
 }
