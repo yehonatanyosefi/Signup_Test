@@ -245,9 +245,24 @@ export default function Signup() {
 		},
 		[signupUser]
 	)
-	const handleFacebookSignup = async (ev) => {
-		alert('facebook')
-	}
+	const handleFacebookSignup = useCallback(
+		(response) => {
+			if (!response.accessToken) return setErrors('Error in signup request. Please try again.')
+			const credentials = response
+			// {
+			//     status: 'connected',
+			//     authResponse: {
+			//         accessToken: '...',
+			//         expiresIn:'...',
+			//         signedRequest:'...',
+			//         userID:'...'
+			//     }
+			// }
+			console.log(`credentials:`, credentials)
+			signupUser(credentials)
+		},
+		[signupUser]
+	)
 
 	useEffect(() => {
 		const script = document.createElement('script')

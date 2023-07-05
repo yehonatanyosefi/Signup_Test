@@ -1,3 +1,4 @@
+import FacebookLogin from 'react-facebook-login'
 import SignupInput from './signup/SignupInput'
 
 export default function SignupWithSocial({
@@ -32,16 +33,19 @@ export default function SignupWithSocial({
 			<button onClick={() => setIsManualSignup(true)} className="submit-btn">
 				Continue
 			</button>
+			{errors.general && <p className="error-msg">{errors.general}</p>}
 			<p>OR</p>
-			<div id="google-signIn-div" className="google-signup"></div>
-			<button className="facebook-btn img-btn" onClick={handleFacebookSignup}>
-				<img
-					className="facebook-img"
-					src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-					alt="facebook"
+			<div id="google-signIn-div" className="signup-div"></div>
+			<div className="signup-div">
+				<FacebookLogin
+					appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+					autoLoad={true}
+					fields="name,email,picture"
+					scope="public_profile,user_friends"
+					callback={handleFacebookSignup}
+					icon="fa-facebook"
 				/>
-				Continue with Facebook
-			</button>
+			</div>
 		</section>
 	)
 }

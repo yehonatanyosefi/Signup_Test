@@ -24,7 +24,7 @@
 		"web-vitals": "^2.1.4"
 	},
 	"scripts": {
-		"start": "react-scripts --max-old-space-size=4096 start",
+		"start": "set HTTPS=true&& react-scripts --max-old-space-size=4096 start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
@@ -50,8 +50,8 @@
 		]
 	},
 	"devDependencies": {
+		"@babel/plugin-proposal-private-property-in-object": "^7.16.7",
 		"@types/react-router-dom": "^5.3.3",
-		"redux-mock-store": "^1.5.4",
-		"@babel/plugin-proposal-private-property-in-object": "^7.16.7"
+		"redux-mock-store": "^1.5.4"
 	}
 }
