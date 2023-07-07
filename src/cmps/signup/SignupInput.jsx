@@ -48,7 +48,7 @@ export default function SignupInput({
 			{(type === 'password' || isVisible) && (
 				<SvgIcon
 					iconName={isVisible ? 'eye-off' : 'eye'}
-					className={`toggle-eye ${isVisible ? 'hide-icon' : ''}`}
+					className={`toggle-eye`}
 					onClick={() => togglePassVisibility(name)}
 				/>
 			)}
