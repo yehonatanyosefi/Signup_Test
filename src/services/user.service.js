@@ -5,17 +5,17 @@ export const userService = {
 
 const API_KEY = 'auth/'
 
-async function signup(credentials) {
+async function signup(unpreparedCredentials) {
 	try {
-		const preparedCredentials = _prepareCredentials(credentials)
-		await httpService.post(API_KEY + 'signup', preparedCredentials)
+		const preparedCredentials = _prepareCredentials(unpreparedCredentials)
+		await httpService.post(API_KEY + 'signup', { credentials: preparedCredentials })
 	} catch (err) {
 		throw err
 	}
 }
 
 function _prepareCredentials(credentials) {
-	const { username, password, firstName, lastName, emailAddress } = credentials
+	const { password, firstName, lastName, emailAddress } = credentials
 	const attributes = [
 		{
 			Name: 'email',
@@ -31,7 +31,7 @@ function _prepareCredentials(credentials) {
 		},
 	]
 	const preparedCredentials = {
-		Username: username,
+		Username: emailAddress,
 		Password: password,
 		UserAttributes: attributes,
 	}

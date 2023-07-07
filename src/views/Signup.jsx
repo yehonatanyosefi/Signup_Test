@@ -42,9 +42,9 @@ export default function Signup() {
 	}
 	const [isFloating, setIsFloating] = useState(true)
 	// State for user's registration information
-	const [credentials, setCredentials] = useCallbackState(JSON.parse(JSON.stringify(blankFields)))
+	const [credentials, setCredentials] = useCallbackState({ ...blankFields })
 	// State for errors in the registration form
-	const [errors, setErrors] = useState(JSON.parse(JSON.stringify(blankFields)))
+	const [errors, setErrors] = useState({ ...blankFields })
 	// State for input fields and their meta information
 	const [inputFields, setInputFields] = useState([
 		{ type: 'text', placeholder: 'First Name', name: 'firstName', hasBeenChecked: false },
@@ -225,21 +225,22 @@ export default function Signup() {
 	const handleGoogleAuthCallback = useCallback(
 		(response) => {
 			const credentials = jwtDecode(response.credential)
-			//Google user object:
-			// aud: '871523970118-hi2gm3r18iflufpcgg72utl38f3l686s.apps.googleusercontent.com'
-			// azp: '871523970118-hi2gm3r18iflufpcgg72utl38f3l686s.apps.googleusercontent.com'
+			// Google user object:
 			// email: 'yehonatanmind@gmail.com'
-			// email_verified: true
-			// exp: 1688553562
 			// family_name: 'Yosefi'
 			// given_name: 'Yehonatan'
-			// iat: 1688549962
+			// aud: '8715'
+			// azp: '8715'
+			// email_verified: true
+			// exp: 16862
+			// iat: 16562
 			// iss: 'https://accounts.google.com'
-			// jti: '4a40fba63b36fb6b08bc794de8d87ef0c286c570'
+			// jti: '4a470'
 			// name: 'Yehonatan Yosefi'
-			// nbf: 1688549662
-			// picture: 'https://lh3.googleusercontent.com/a/AAcHTtcSWYnBw2MC45GTtQo922j3wuh_b7MGAyW222JAEZs=s96-c'
-			// sub: '101111312956968306746'
+			// nbf: 16862
+			// picture: 'https://lhEZs=s96-c'
+			// sub: '1011116746'
+
 			// const user = userService.prepareData(userObject)
 			signupUser(credentials)
 		},
