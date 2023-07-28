@@ -13,17 +13,15 @@ export default function App() {
 	return (
 		<Suspense fallback={<p>Loading...</p>}>
 			<Router>
-				<main className="main-app">
-					<Routes>
-						<Route path={SUCCESS} element={<Success />} />
-						<Route path={ERROR} element={<Error />} />
-						<Route path={YOGA} element={<Yoga />} />
-						<Route path={HOME} element={<Home />} />
-						<Route path={SIGN_UP} element={<Signup />} />
-						<Route path={NOT_FOUND} element={<NotFound />} />
-						<Route path="*" element={<Navigate to={NOT_FOUND} replace />} />
-					</Routes>
-				</main>
+				<Routes>
+					<Route path={SUCCESS} element={<Success />} />
+					<Route path={ERROR} element={<Error />} />
+					<Route path={YOGA} element={<Yoga />} />
+					<Route path={HOME} element={<Home />} />
+					<Route path={SIGN_UP} element={<Signup />} />
+					<Route path={NOT_FOUND} element={<NotFound />} />
+					<Route path="*" element={<Navigate to={NOT_FOUND} replace />} />
+				</Routes>
 			</Router>
 		</Suspense>
 	)

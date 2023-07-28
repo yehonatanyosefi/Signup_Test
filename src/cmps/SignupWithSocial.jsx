@@ -1,7 +1,7 @@
 import SignupInput from './signup/SignupInput'
 
-import { LoginSocialFacebook } from 'reactjs-social-login'
-import { FacebookLoginButton } from 'react-social-login-buttons'
+// import { LoginSocialFacebook } from 'reactjs-social-login'
+// import { FacebookLoginButton } from 'react-social-login-buttons'
 
 export default function SignupWithSocial({
 	setIsManualSignup,
@@ -13,51 +13,44 @@ export default function SignupWithSocial({
 	handleFocus,
 	handleBlur,
 	togglePassVisibility,
-	handleFacebookSignup,
+	// handleFacebookSignup,
 }) {
-	function handleReject(err) {
-		console.log(err)
+	// function handleReject(err) {
+	// 	console.log(err)
+	// }
+
+	function handleSubmit(ev) {
+		ev.preventDefault()
+		setIsManualSignup(true)
 	}
 
 	return (
 		<section className="social-signup">
-			<h1>Create Your Account</h1>
-			<p>
-				Please note that phone verification is required for signup. Your number will be only used to
-				verify your identity for security purposes
-			</p>
-			<SignupInput
-				inputField={inputFields[0]}
-				credentials={credentials}
-				errors={errors}
-				isFloating={isFloating}
-				handleChange={handleChange}
-				handleFocus={handleFocus}
-				handleBlur={handleBlur}
-				togglePassVisibility={togglePassVisibility}
-			/>
-			<button onClick={() => setIsManualSignup(true)} className="submit-btn">
-				Continue
-			</button>
-			{errors.general && <p className="error-msg">{errors.general}</p>}
-			<p>OR</p>
+			<h1 className="title">Create Your Account</h1>
+			<form onSubmit={handleSubmit}>
+				<SignupInput
+					inputField={inputFields[2]}
+					credentials={credentials}
+					errors={errors}
+					isFloating={isFloating}
+					handleChange={handleChange}
+					handleFocus={handleFocus}
+					handleBlur={handleBlur}
+					togglePassVisibility={togglePassVisibility}
+				/>
+				<button className="submit-btn">Continue</button>
+				{errors.general && <p className="error-msg">{errors.general}</p>}
+			</form>
+			<div className="or">OR</div>
 			<div id="google-signIn-div" className="signup-div"></div>
-			<div className="signup-div">
+			{/* <div className="signup-div">
 				<LoginSocialFacebook
 					appId={process.env.REACT_APP_FACEBOOK_APP_ID}
 					onResolve={handleFacebookSignup}
 					onReject={handleReject}>
 					<FacebookLoginButton className="facebook-button"></FacebookLoginButton>
 				</LoginSocialFacebook>
-				{/* <FacebookLogin
-					appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-					autoLoad={true}
-					fields="name,email,picture"
-					scope="public_profile,user_friends"
-					callback={handleFacebookSignup}
-					icon="fa-facebook"
-				/> */}
-			</div>
+			</div> */}
 		</section>
 	)
 }

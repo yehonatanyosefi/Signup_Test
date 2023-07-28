@@ -12,13 +12,42 @@
 		border: none;
 		outline: none;
 	}
+	.social-signup {
+		.title {
+			display: flex;
+			justify-content: center;
+			font-family: $main-font-bold;
+		}
+		.or {
+			display: flex;
+			align-items: center;
+			text-align: center;
+			margin: 20px 0; // add some margin to the top and bottom
+
+			&::before,
+			&::after {
+				content: '';
+				flex: 1;
+				border-bottom: 1px solid #000; // change color as needed
+			}
+
+			// add some spacing between the line and the OR text
+			&::before {
+				margin-right: 0.5em;
+			}
+
+			&::after {
+				margin-left: 0.5em;
+			}
+		}
+	}
 	form,
 	.social-signup {
 		label {
 			font-size: 14px;
 			color: lighten($placeholder-clr, 25%);
 			padding: $input-padding;
-			font-family: 'SourceSansPro-SemiBold', sans-serif;
+			font-family: $main-font;
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -49,7 +78,7 @@
 			align-items: center;
 			font-size: 16px;
 			position: relative;
-			font-family: 'SourceSansPro-SemiBold', sans-serif;
+			font-family: $main-font-bold;
 
 			input {
 				// &:focus {
@@ -137,7 +166,7 @@
 		}
 	}
 	.submit-btn {
-		font-family: 'SourceSansPro-Regular', sans-serif;
+		font-family: $main-font;
 		@include wide-btn;
 		background-color: $accent-clr;
 		color: $white-font-clr;

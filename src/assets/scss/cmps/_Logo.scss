@@ -1,9 +1,10 @@
 .logo-header {
+	margin-block-start: rem(60px);
+	margin-block-end: rem(160px);
 	@include flex-center;
 	flex-direction: column;
-	margin-block-end: rem(90px);
 	.logo {
-		margin-block-start: rem(32px);
+		// margin-block-start: rem(32px);
 		margin-block-end: rem(7px);
 		width: 50px;
 	}

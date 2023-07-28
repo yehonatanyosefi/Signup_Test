@@ -224,6 +224,7 @@ export default function Signup() {
 
 	const handleGoogleAuthCallback = useCallback(
 		(response) => {
+			if (!response.credential) return setErrors('Error in signup request. Please try again.')
 			const credentials = jwtDecode(response.credential)
 			// Google user object:
 			// email: 'yehonatanmind@gmail.com'

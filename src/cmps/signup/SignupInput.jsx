@@ -1,5 +1,5 @@
 import { SvgIcon } from '../util/SvgIcon'
-
+const EMAIL_REGEX = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$'
 export default function SignupInput({
 	inputField,
 	credentials,
@@ -29,7 +29,7 @@ export default function SignupInput({
 				aria-required="true"
 				aria-invalid={!!errors[name]}
 				required
-				pattern=".*"
+				pattern={name === 'emailAddress' ? EMAIL_REGEX : '.*'}
 			/>
 			<label htmlFor={name} className={isFloating ? '' : 'hidden'}>
 				{placeholder}
